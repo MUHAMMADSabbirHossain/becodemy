@@ -1,0 +1,26 @@
+{
+  "name": "@multi-vendor-e-commerce-saas-microservice-architecture/auth-service-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@multi-vendor-e-commerce-saas-microservice-architecture/auth-service"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/auth-service-e2e/jest.config.cts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "@multi-vendor-e-commerce-saas-microservice-architecture/auth-service:build",
+          "@multi-vendor-e-commerce-saas-microservice-architecture/auth-service:serve"
+        ]
+      }
+    }
+  }
+}
