@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eshop Activation Email</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+      /* Base */
+      body {
+        margin: 0;
+        padding: 0;
+        min-width: 100%;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        background-color: #fafafa;
+        color: #222222;
+      }
+
+      a {
+        color: #000;
+        text-decoration: none;
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-top: 0;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 24px;
+      }
+
+      table td {
+        vertical-align: top;
+      }
+
+      /* Layout */
+      .email-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .email-header {
+        background-color: #0070f3;
+        padding: 24px;
+        color: #fff;
+      }
+
+      .email-body {
+        background-color: #fff;
+        padding: 24px;
+      }
+
+      .email-footer {
+        background-color: #f6f6f6;
+        padding: 24px;
+      }
+
+      /* Buttons */
+      .button {
+        display: inline-block;
+        background-color: #0070f3;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h2>Welcome to Eshop</h2>
+      </div>
+
+      <div class="email-body">
+        <p>hello <%= name %>,</p>
+        <p>
+          Thank you for registering with Eshop. To activate your account, please
+          click the link below:
+        </p>
+        <h2><%= otp %></h2>
+        <p>
+          Please enter this code on the activation page within the next 5
+          minutes.
+        </p>
+        <p>If you did not register for a Eshop, please ignore this email.</p>
+      </div>
+
+      <div class="email-footer">
+        <p>If you have questions, please don't hesitate to contact us.</p>
+        <a href="mailto:dustobalok000@gmail.com">dustobalok000@gmail.com</a>
+      </div>
+    </div>
+  </body>
+</html>
