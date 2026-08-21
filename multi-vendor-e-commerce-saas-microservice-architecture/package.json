@@ -7,6 +7,7 @@
   },
   "private": true,
   "dependencies": {
+    "@prisma/client": "^7.9.1",
     "axios": "^1.19.0",
     "cookie-parse": "^0.4.0",
     "cookie-parser": "^1.4.7",
@@ -15,6 +16,7 @@
     "express-http-proxy": "^2.1.2",
     "express-rate-limit": "^8.6.2",
     "morgan": "^1.11.0",
+    "prisma": "^7.9.1",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
