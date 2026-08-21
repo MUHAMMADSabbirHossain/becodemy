@@ -1,4 +1,4 @@
-import { errorMiddleware } from "./../../../packages/error-handler/error-middleware";
+import { errorMiddleware } from "@packages/error-handler/error-middleware";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";

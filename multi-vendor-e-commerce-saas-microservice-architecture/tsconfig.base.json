@@ -16,6 +16,11 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@multi-vendor-e-commerce-saas-microservice-architecture/source"]
+    "customConditions": [
+      "@multi-vendor-e-commerce-saas-microservice-architecture/source"
+    ],
+    "paths": {
+      "@packages/*": ["./packages/*"]
+    }
   }
 }
