@@ -2,7 +2,15 @@
   "name": "@eshop-multivendor-ecommerce-microservice/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "npx nx run-many --target=serve --all",
+    "build": "npx nx run-many --target=build --all",
+    "test": "npx nx run-many --target=test --all",
+    "lint": "npx nx run-many --target=lint --all",
+    "format": "npx nx run-many --target=format --all",
+    "start": "npx nx run-many --target=serve --all",
+    "reset": "npx nx reset"
+  },
   "private": true,
   "dependencies": {
     "axios": "^1.6.0",
