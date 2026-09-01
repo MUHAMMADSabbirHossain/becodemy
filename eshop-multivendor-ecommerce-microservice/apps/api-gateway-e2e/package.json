@@ -1,0 +1,26 @@
+{
+  "name": "@eshop-multivendor-ecommerce-microservice/api-gateway-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@eshop-multivendor-ecommerce-microservice/api-gateway"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "dependsOn": [
+          "@eshop-multivendor-ecommerce-microservice/api-gateway:build",
+          "@eshop-multivendor-ecommerce-microservice/api-gateway:serve"
+        ],
+        "options": {
+          "jestConfig": "apps/api-gateway-e2e/jest.config.cts",
+          "passWithNoTests": true
+        }
+      }
+    }
+  }
+}
