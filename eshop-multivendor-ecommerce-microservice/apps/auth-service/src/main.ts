@@ -3,6 +3,7 @@
  * This is only a minimal backend to get started.
  */
 
+import { errorHandler } from '@eshop-multivendor-ecommerce-microservice/error-handler';
 import express from 'express';
 import * as path from 'path';
 
@@ -11,7 +12,7 @@ const app = express();
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.get('/api', (req, res) => {
-  res.send({ message: 'Welcome to auth-service!' });
+  res.send({ message: 'Welcome to auth-service!' + '' + errorHandler() });
 });
 
 const port = process.env.PORT || 3333;
