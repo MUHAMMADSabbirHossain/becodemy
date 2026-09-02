@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "npx nx run-many --target=serve --all",
+    "dev": "npx nx run-many --target=serve --all --configuration=development",
     "build": "npx nx run-many --target=build --all",
     "test": "npx nx run-many --target=test --all",
     "lint": "npx nx run-many --target=lint --all",
     "format": "npx nx run-many --target=format --all",
-    "start": "npx nx run-many --target=serve --all",
+    "start": "npx nx run-many --target=serve --all --configuration=production",
     "reset": "npx nx reset"
   },
   "private": true,
@@ -70,6 +70,7 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/error-handler"
+    "packages/error-handler",
+    "packages/database"
   ]
 }
