@@ -3,7 +3,10 @@
  * This is only a minimal backend to get started.
  */
 
-import { errorHandler } from '@eshop-multivendor-ecommerce-microservice/error-handler';
+import {
+  errorHandler,
+  errorMiddleware,
+} from '@eshop-multivendor-ecommerce-microservice/error-handler';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -31,6 +34,8 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to auth-service!' + ' ' + errorHandler() });
 });
+
+app.use(errorMiddleware);
 
 const server = app.listen(port, () => {
   console.log(`Auth service is listening at http://localhost:${port}/api`);
