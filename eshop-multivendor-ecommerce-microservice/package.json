@@ -10,11 +10,13 @@
     "format": "npx nx run-many --target=format --all",
     "start": "npx nx run-many --target=serve --all --configuration=production",
     "reset": "npx nx reset",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "auth-docs": "node apps/auth-service/src/swagger.ts"
   },
   "private": true,
   "dependencies": {
     "@prisma/orm-mongo": "^8.0.0-rc.8",
+    "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -23,6 +25,7 @@
     "express-http-proxy": "^2.1.2",
     "express-rate-limit": "^8.7.0",
     "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.12.0",
     "nodemailer": "^10.0.0",
     "swagger-autogen": "^2.23.7",
