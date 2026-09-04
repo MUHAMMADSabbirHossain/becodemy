@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import {
   checkOtpRestrictions,
+  handleForgotPassword,
   sendOtp,
   trackOtpRequests,
   validateRegistrationData,
@@ -50,7 +51,7 @@ export const verifyUser = async (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> => {
+): Promise<void | Response> => {
   try {
     const { email, otp, password, name } = req.body;
 
@@ -86,7 +87,7 @@ export const userLogin = async (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> => {
+): Promise<void | Response> => {
   try {
     const { email, password } = req.body;
 
@@ -138,4 +139,13 @@ export const userLogin = async (
   } catch (error) {
     return next(error);
   }
+};
+
+// User forgot password
+export const userForgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void | Response> => {
+  await handleForgotPassword(req, res, next, 'user');
 };

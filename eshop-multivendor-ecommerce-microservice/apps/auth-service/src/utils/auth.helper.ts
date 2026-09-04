@@ -1,7 +1,10 @@
 import crypto from 'crypto';
-import { NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from '@eshop-multivendor-ecommerce-microservice/error-handler';
-import { redis } from '@eshop-multivendor-ecommerce-microservice/database';
+import {
+  prisma,
+  redis,
+} from '@eshop-multivendor-ecommerce-microservice/database';
 import { sendEmail } from './send-mail';
 
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,7 +12,7 @@ export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const validateRegistrationData = (
   data: any,
   userType: 'user' | 'seller',
-): void => {
+): void | Response => {
   const { name, email, password, phone_number, country } = data;
 
   if (
@@ -30,7 +33,7 @@ export const validateRegistrationData = (
 export const checkOtpRestrictions = async (
   email: string,
   next: NextFunction,
-): Promise<void> => {
+): Promise<void | Response> => {
   if (await redis.get(`otp_lock:{email}`)) {
     return next(
       new ValidationError(
@@ -73,7 +76,7 @@ export const checkOtpRestrictions = async (
 export const trackOtpRequests = async (
   email: string,
   next: NextFunction,
-): Promise<void> => {
+): Promise<void | Response> => {
   const otpRequestKey = `otp_requests_count:${email}`;
   const otpRequests: number = parseInt((await redis.get(otpRequestKey)) || '0');
 
@@ -94,7 +97,7 @@ export const sendOtp = async (
   name: string,
   email: string,
   template: string,
-): Promise<void> => {
+): Promise<void | Response> => {
   const otp = crypto.randomInt(1000, 9999).toString();
 
   await sendEmail(email, 'Verify your email', template, { name, otp });
@@ -107,7 +110,7 @@ export const verifyOtp = async (
   email: string,
   otp: string,
   next: NextFunction,
-) => {
+): Promise<void | Response> => {
   const storedOtp = await redis.get(`otp:${email}`);
 
   if (!storedOtp) throw new ValidationError(`Invalid or expired OTP!`);
@@ -135,4 +138,36 @@ export const verifyOtp = async (
   }
 
   await redis.del(`otp:${email}`, failedAttemptsKey);
+};
+
+export const handleForgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  userType: 'user' | 'seller',
+): Promise<void | Response> => {
+  try {
+    const { email } = req.body;
+
+    if (!email) throw new ValidationError(`Email field is required!`);
+
+    // Find the user/seller by email
+    const user = await prisma.orm.users.where({ email }).first();
+
+    if (!user) throw new ValidationError(`${userType} not found!`);
+
+    // Check opt restrictions
+    await checkOtpRestrictions(email, next);
+    await trackOtpRequests(email, next);
+
+    // Generate and send OTP to email
+    await sendOtp(email, user.name, 'forgot-password-mail');
+
+    return res.status(200).json({
+      message: 'OTP sent to email. Please verify your account.',
+      data: null,
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
