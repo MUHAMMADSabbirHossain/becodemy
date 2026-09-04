@@ -6,9 +6,14 @@ import {
   validateRegistrationData,
   verifyOtp,
 } from '../utils/auth.helper';
-import { ValidationError } from '@eshop-multivendor-ecommerce-microservice/error-handler';
+import {
+  AuthError,
+  ValidationError,
+} from '@eshop-multivendor-ecommerce-microservice/error-handler';
 import { prisma } from '@eshop-multivendor-ecommerce-microservice/database';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { setCookie } from '../utils/cookies/setCookie';
 
 // Register a new user - user or seller
 export const userRegistration = async (
@@ -22,6 +27,7 @@ export const userRegistration = async (
 
     // Check if new user email already exists in the database
     const existingUser = await prisma.orm.users.where({ email }).first();
+    console.log(existingUser);
 
     if (existingUser) {
       return next(new ValidationError(`User already exists with this email!`));
@@ -60,17 +66,74 @@ export const verifyUser = async (
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.orm.users.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
+      name,
+      email,
+      password: hashedPassword,
     });
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully!',
       data: user,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// User login
+export const userLogin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password)
+      return next(
+        new ValidationError(`Email and password fields are required!`),
+      );
+
+    const user = await prisma.orm.users.where({ email }).first();
+
+    if (!user) return next(new AuthError(`User not found!`));
+
+    // Verify password
+    const isPasswordValid: boolean = await bcrypt.compare(
+      password,
+      user.password,
+    );
+
+    if (!isPasswordValid)
+      return next(new ValidationError(`Invalid email or password!`));
+
+    if (!user) return next(new AuthError(`User not found!`));
+
+    // Generate access and refresh tokens
+    const accessToken = jwt.sign(
+      { id: user.id, role: 'user' },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: '15m' },
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id, role: 'user' },
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: '7d' },
+    );
+
+    // Store the refresh and access token in a httpOnly secure cookie
+    setCookie(res, 'refreshToken', refreshToken);
+    setCookie(res, 'accessToken', accessToken);
+
+    res.status(200).json({
+      message: 'User logged in successfully!',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     return next(error);
