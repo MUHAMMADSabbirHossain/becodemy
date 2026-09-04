@@ -149,3 +149,50 @@ export const userForgotPassword = async (
 ): Promise<void | Response> => {
   await handleForgotPassword(req, res, next, 'user');
 };
+
+// Reset user password
+export const resetUserPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void | Response> => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword)
+      return next(new ValidationError(`All fields are required!`));
+
+    const user = await prisma.orm.users.where({ email }).first();
+
+    if (!user) return next(new ValidationError(`User not found!`));
+
+    // Compare new password with the existing one
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePassword)
+      return next(
+        new ValidationError(
+          `New password cannot be the same as the old password!`,
+        ),
+      );
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await prisma.orm.users.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    res.status(200).json({
+      message: 'Password reset successfully!',
+      data: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
