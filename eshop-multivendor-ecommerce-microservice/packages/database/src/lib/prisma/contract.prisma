@@ -1,0 +1,43 @@
+// use prisma-next
+
+// model User {
+//   id       ObjectId @id @map("_id")
+//   email    String   @unique
+//   username String?
+//   name     String?
+//   posts    Post[]
+//   @@map("users")
+// }
+
+// model Post {
+//   id       ObjectId @id @map("_id")
+//   title    String
+//   content  String?
+//   author   User     @relation(fields: [authorId], references: [id])
+//   authorId ObjectId
+//   @@map("posts")
+// }
+
+model images {
+  id ObjectId @id @map("_id")
+  file_id String
+  url     String
+  altText String?
+  usersId String? @unique @db.ObjectId
+  users   users?  @relation(fields: [usersId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model users {
+  id ObjectId @id @map("_id")
+  name      String
+  email     String   @unique
+  password  String? // Optional field for password for if the user registers with social accounts.
+  following String[]
+  avatar images?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
