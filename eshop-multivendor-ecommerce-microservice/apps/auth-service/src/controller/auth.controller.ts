@@ -5,6 +5,7 @@ import {
   sendOtp,
   trackOtpRequests,
   validateRegistrationData,
+  verifyForgotPasswordOtp,
   verifyOtp,
 } from '../utils/auth.helper';
 import {
@@ -148,6 +149,15 @@ export const userForgotPassword = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   await handleForgotPassword(req, res, next, 'user');
+};
+
+// Verify forgot password OTP
+export const verifyUserForgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  await verifyForgotPasswordOtp(req, res, next);
 };
 
 // Reset user password

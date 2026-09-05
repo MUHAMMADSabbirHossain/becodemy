@@ -171,3 +171,25 @@ export const handleForgotPassword = async (
     return next(error);
   }
 };
+
+export const verifyForgotPasswordOtp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void | Response> => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp)
+      throw new ValidationError(`Email and OTP fields are required!`);
+
+    await verifyOtp(email, otp, next);
+
+    return res.status(200).json({
+      message: 'OTP verified successfully!',
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
