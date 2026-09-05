@@ -20,14 +20,18 @@
     },
     {
       "path": "./packages/database"
+    },
+    {
+      "path": "./apps/user-ui-e2e"
+    },
+    {
+      "path": "./apps/user-ui"
     }
   ],
   "compilerOptions": {
     "module": "preserve",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   }
 }

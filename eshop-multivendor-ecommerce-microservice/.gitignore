@@ -50,3 +50,7 @@ test-output
 .env
 node_modules/
 dist/
+
+# Next.js
+.next
+out

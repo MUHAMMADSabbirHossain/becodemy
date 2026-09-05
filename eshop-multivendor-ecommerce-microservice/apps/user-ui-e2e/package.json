@@ -1,0 +1,10 @@
+{
+  "name": "@eshop-multivendor-ecommerce-microservice/user-ui-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@eshop-multivendor-ecommerce-microservice/user-ui"
+    ]
+  }
+}
