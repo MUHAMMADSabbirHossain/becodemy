@@ -1,6 +1,8 @@
 'use client';
 
 import GoogleButton from '@/shared/components/google-button';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -11,6 +13,8 @@ type FormData = {
   email: string;
   password: string;
 };
+
+const NEXT_PUBLIC_SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI as string;
 
 const Login = (): JSX.Element => {
   const [passwrodVisible, setPasswordVisible] = useState<boolean>(false);
@@ -24,8 +28,32 @@ const Login = (): JSX.Element => {
     formState: { errors },
   } = useForm<FormData>();
 
+  const loginMutaion = useMutation({
+    mutationFn: async (data: FormData): Promise<void | Response> => {
+      const response = await axios.post(
+        `${NEXT_PUBLIC_SERVER_URI}/api/login-user`,
+        data,
+        { withCredentials: true },
+      );
+      console.log(response);
+
+      return response.data;
+    },
+    onSuccess: () => {
+      setServerError(null);
+      router.push('/');
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage =
+        (error.response?.data as { message?: string })?.message ||
+        'Invalid credentials';
+
+      setServerError(errorMessage);
+    },
+  });
+
   const onSubmit = (data: FormData) => {
-    //
+    loginMutaion.mutate(data);
   };
 
   return (
@@ -126,13 +154,16 @@ const Login = (): JSX.Element => {
 
             <button
               type="submit"
+              disabled={loginMutaion.isPending}
               className="w-full text-lg bg-black text-white py-2 rounded-lg"
             >
-              Login
+              {loginMutaion.isPending ? 'Loading...' : 'Login'}
             </button>
 
             {serverError && (
-              <p className="text-red-500 text-sm mt-2">{serverError}</p>
+              <p className="text-red-500 text-sm mt-2 text-center font-semibold">
+                {serverError}
+              </p>
             )}
           </form>
         </div>
