@@ -1,6 +1,8 @@
 'use client';
 
+import axios, { AxiosError } from 'axios';
 import GoogleButton from '@/shared/components/google-button';
+import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -13,13 +15,14 @@ type FormData = {
   password: string;
 };
 
+const NEXT_PUBLIC_SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI as string;
+
 const Signup = (): JSX.Element => {
   const [passwrodVisible, setPasswordVisible] = useState<boolean>(false);
-  const [serverError, setServerError] = useState<string | null>(null);
   const [showOtp, setShowOtp] = useState<boolean>(false);
   const [canResend, setCanResend] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
-  const [otp, setOtp] = useState<string[]>(['', '', '', '', '']);
+  const [otp, setOtp] = useState<string[]>(['', '', '', '']);
   const [userData, setUserData] = useState<FormData | null>(null);
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
@@ -30,8 +33,59 @@ const Signup = (): JSX.Element => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const startResendTimer = (): void => {
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 0) {
+          clearInterval(interval);
+          setCanResend(true);
+
+          return 0;
+        }
+
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const signupMutation = useMutation({
+    mutationFn: async (data: FormData): Promise<void | Response> => {
+      const response = await axios.post(
+        `${NEXT_PUBLIC_SERVER_URI}/api/user-registration`,
+        data,
+      );
+      console.log(response);
+      return response.data;
+    },
+    onSuccess: (_, formData) => {
+      setUserData(formData);
+      setShowOtp(true);
+      setCanResend(false);
+      setTimer(60);
+      startResendTimer();
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: async (): Promise<void | Response> => {
+      if (!userData) return;
+      console.log(userData);
+
+      const response = await axios.post(
+        `${NEXT_PUBLIC_SERVER_URI}/api/verify-user`,
+        { ...userData, otp: otp.join('') },
+      );
+      console.log(response);
+
+      return response.data;
+    },
+    onSuccess: () => {
+      router.push('/login');
+    },
+  });
+
+  const onSubmit = (data: FormData): void => {
+    signupMutation.mutate(data);
   };
 
   const handleOtpChange = (index: number, value: string): void => {
@@ -166,14 +220,11 @@ const Signup = (): JSX.Element => {
 
               <button
                 type="submit"
+                disabled={signupMutation.isPending}
                 className="w-full text-lg bg-black mt-4 text-white py-2 rounded-lg"
               >
-                Sign Up
+                {signupMutation.isPending ? 'Signing up...' : 'Sign up'}
               </button>
-
-              {serverError && (
-                <p className="text-red-500 text-sm mt-2">{serverError}</p>
-              )}
             </form>
           ) : (
             <div className="text-xl fond-semibold  text-center mb-4">
@@ -196,8 +247,12 @@ const Signup = (): JSX.Element => {
                 ))}
               </div>
 
-              <button className="w-full mt-4 text-lg bg-blue-500 text-white py-2 rounded-lg">
-                Verify OTP
+              <button
+                className="w-full mt-4 text-lg bg-blue-500 text-white py-2 rounded-lg"
+                disabled={verifyOtpMutation.isPending}
+                onClick={() => verifyOtpMutation.mutate()}
+              >
+                {verifyOtpMutation.isPending ? 'Verifying...' : 'Verify OTP'}
               </button>
 
               <div className="text-center text-sm mt-4">
@@ -208,6 +263,15 @@ const Signup = (): JSX.Element => {
                 ) : (
                   <p>{`Resend OTP in ${timer} seconds`}</p>
                 )}
+
+                {verifyOtpMutation?.isError &&
+                  verifyOtpMutation?.error instanceof AxiosError && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {verifyOtpMutation.error.response?.data?.message ||
+                        verifyOtpMutation.error.message ||
+                        'Something went wrong. Please try again later!'}
+                    </p>
+                  )}
               </div>
             </div>
           )}
