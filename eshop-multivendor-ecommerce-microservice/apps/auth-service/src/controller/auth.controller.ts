@@ -14,7 +14,7 @@ import {
 } from '@eshop-multivendor-ecommerce-microservice/error-handler';
 import { prisma } from '@eshop-multivendor-ecommerce-microservice/database';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { setCookie } from '../utils/cookies/setCookie';
 
 // Register a new user - user or seller
@@ -139,6 +139,51 @@ export const userLogin = async (
     });
   } catch (error) {
     return next(error);
+  }
+};
+
+// Refresh token user
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void | Response> => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    console.log(refreshToken);
+
+    if (!refreshToken)
+      throw new AuthError(`Unauthorized! Refresh token not found.`);
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET as string,
+    ) as { id: string; role: string };
+    console.log(decoded);
+
+    if (!decoded || !decoded.id || !decoded.role)
+      throw new JsonWebTokenError('Forbidden! Invalid refresh token.');
+
+    // let account;
+    // if(decoded.role === 'user')
+    const user = await prisma.orm.users.where({ id: decoded.id }).first();
+    console.log(user);
+
+    if (!user) throw new AuthError(`User not found!`);
+
+    const newAccessToken = jwt.sign(
+      { id: decoded.id, role: decoded.role },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: '15m' },
+    );
+
+    setCookie(res, 'accessToken', newAccessToken);
+
+    res
+      .status(200)
+      .json({ success: true, message: 'Access token refreshed successfully!' });
+  } catch (error) {
+    next(error);
   }
 };
 
