@@ -113,7 +113,7 @@ const Signup = (): JSX.Element => {
   };
 
   const resendOtp = () => {
-    //
+    if (userData) signupMutation.mutate(userData);
   };
 
   return (

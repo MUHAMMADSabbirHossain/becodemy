@@ -13,8 +13,8 @@ const router: Router = express.Router();
 router.post('/user-registration', userRegistration);
 router.post('/verify-user', verifyUser);
 router.post('/login-user', userLogin);
-router.post('/forgot-password', userForgotPassword);
-router.post('/reset-user-password', resetUserPassword);
-router.post('/verify-forgot-password-otp', verifyUserForgotPassword);
+router.post('/forgot-password-user', userForgotPassword);
+router.post('/reset-password-user', resetUserPassword);
+router.post('/verify-forgot-password-user', verifyUserForgotPassword);
 
 export default router;
