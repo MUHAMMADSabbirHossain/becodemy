@@ -29,6 +29,12 @@
     },
     {
       "path": "./packages/middleware"
+    },
+    {
+      "path": "./apps/seller-ui-e2e"
+    },
+    {
+      "path": "./apps/seller-ui"
     }
   ],
   "compilerOptions": {

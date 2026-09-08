@@ -13,7 +13,8 @@
     "contract:emit": "prisma contract emit",
     "auth-docs": "node apps/auth-service/src/swagger.ts",
     "plugin:list": "npx nx report",
-    "user-ui": "npx nx run-many --target=dev --all --projects=user-ui"
+    "user-ui": "npx nx run-many --target=dev --all --projects=user-ui",
+    "seller-ui": "npx nx run-many --target=dev --all --projects=seller-ui"
   },
   "private": true,
   "dependencies": {
