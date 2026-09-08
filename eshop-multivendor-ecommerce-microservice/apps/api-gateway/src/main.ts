@@ -60,6 +60,6 @@ app.get('/gateway-health', (req, res) => {
 app.use('/', proxy('http://localhost:6001'));
 
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
+  // console.log(`Listening at http://localhost:${port}/api`);
 });
 server.on('error', console.error);

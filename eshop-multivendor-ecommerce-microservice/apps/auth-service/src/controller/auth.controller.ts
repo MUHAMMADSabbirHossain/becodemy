@@ -29,7 +29,7 @@ export const userRegistration = async (
 
     // Check if new user email already exists in the database
     const existingUser = await prisma.orm.users.where({ email }).first();
-    console.log(existingUser);
+    // console.log(existingUser);
 
     if (existingUser) {
       return next(new ValidationError(`User already exists with this email!`));
@@ -112,7 +112,7 @@ export const userLogin = async (
 
     if (!user) return next(new AuthError(`User not found!`));
 
-    console.log({ user });
+    // console.log({ user });
 
     // Generate access and refresh tokens
     const accessToken = jwt.sign(
@@ -152,7 +152,7 @@ export const refreshToken = async (
 ): Promise<void | Response> => {
   try {
     const refreshToken = req.cookies.refreshToken;
-    console.log(refreshToken);
+    // console.log(refreshToken);
 
     if (!refreshToken)
       throw new AuthError(`Unauthorized! Refresh token not found.`);
@@ -161,7 +161,7 @@ export const refreshToken = async (
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET as string,
     ) as { id: string; role: string };
-    console.log({ decoded });
+    // console.log({ decoded });
 
     if (!decoded || !decoded.id || !decoded.role)
       throw new JsonWebTokenError('Forbidden! Invalid refresh token.');
@@ -169,7 +169,7 @@ export const refreshToken = async (
     // let account;
     // if(decoded.role === 'user')
     const user = await prisma.orm.users.where({ id: decoded.id }).first();
-    console.log(user);
+    // console.log(user);
 
     if (!user) throw new AuthError(`User not found!`);
 

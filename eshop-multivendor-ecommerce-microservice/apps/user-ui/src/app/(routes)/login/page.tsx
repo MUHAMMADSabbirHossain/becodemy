@@ -35,7 +35,7 @@ const Login = (): JSX.Element => {
         data,
         { withCredentials: true },
       );
-      console.log(response);
+      // console.log(response);
 
       return response.data;
     },

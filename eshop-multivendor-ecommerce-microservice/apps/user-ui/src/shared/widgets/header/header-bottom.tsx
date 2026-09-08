@@ -14,7 +14,7 @@ const HeaderBottom = (): JSX.Element => {
   const [show, setShow] = useState<boolean>(false);
   const [isSticky, setIsSticky] = useState<boolean>(false);
   const { user, isPending } = useUser();
-  console.log(user);
+  // console.log(user);
 
   // Track scroll position
   useEffect(() => {

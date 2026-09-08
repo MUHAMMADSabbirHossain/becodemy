@@ -7,7 +7,7 @@ export const errorMiddleware = (
   next: NextFunction,
 ) => {
   if (err instanceof AppError) {
-    console.log(`Error [${req.method}] ${req.url} - ${err.message}`);
+    // console.log(`Error [${req.method}] ${req.url} - ${err.message}`);
 
     return res.status(err.statusCode).json({
       status: 'error',
@@ -18,7 +18,7 @@ export const errorMiddleware = (
     });
   }
 
-  console.log('Unhandle error: ', err);
+  // console.log('Unhandle error: ', err);
 
   return res.status(500).json({
     status: 'error',

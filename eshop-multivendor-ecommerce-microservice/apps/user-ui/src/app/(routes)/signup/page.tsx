@@ -54,7 +54,7 @@ const Signup = (): JSX.Element => {
         `${NEXT_PUBLIC_SERVER_URI}/api/user-registration`,
         data,
       );
-      console.log(response);
+      // console.log(response);
       return response.data;
     },
     onSuccess: (_, formData) => {
@@ -69,13 +69,13 @@ const Signup = (): JSX.Element => {
   const verifyOtpMutation = useMutation({
     mutationFn: async (): Promise<void | Response> => {
       if (!userData) return;
-      console.log(userData);
+      // console.log(userData);
 
       const response = await axios.post(
         `${NEXT_PUBLIC_SERVER_URI}/api/verify-user`,
         { ...userData, otp: otp.join('') },
       );
-      console.log(response);
+      // console.log(response);
 
       return response.data;
     },
