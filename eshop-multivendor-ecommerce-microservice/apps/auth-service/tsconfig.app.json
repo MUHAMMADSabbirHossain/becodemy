@@ -20,6 +20,9 @@
   ],
   "references": [
     {
+      "path": "../../packages/middleware/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/database/tsconfig.lib.json"
     },
     {

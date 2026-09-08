@@ -118,6 +118,7 @@
   "workspaces": [
     "apps/*",
     "packages/error-handler",
-    "packages/database"
+    "packages/database",
+    "packages/middleware"
   ]
 }

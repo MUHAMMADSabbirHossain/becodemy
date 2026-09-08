@@ -187,6 +187,20 @@ export const refreshToken = async (
   }
 };
 
+// get logged in user
+export const getUser = async (
+  req: Request & { user?: unknown },
+  res: Response,
+  next: NextFunction,
+): Promise<void | Response> => {
+  try {
+    const user = req.user;
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // User forgot password
 export const userForgotPassword = async (
   req: Request,
