@@ -5,6 +5,7 @@ import HeartIcon from '@/assets/svgs/heart-icon';
 import ProfileIcon from '@/assets/svgs/profile-icon';
 import { navItems } from '@/configs/constants';
 import { NavItemTypes } from '@/configs/global';
+import useUser from '@/hooks/useUser';
 import { AlignLeft, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import React, { JSX, useEffect, useState } from 'react';
@@ -12,6 +13,8 @@ import React, { JSX, useEffect, useState } from 'react';
 const HeaderBottom = (): JSX.Element => {
   const [show, setShow] = useState<boolean>(false);
   const [isSticky, setIsSticky] = useState<boolean>(false);
+  const { user, isPending } = useUser();
+  console.log(user);
 
   // Track scroll position
   useEffect(() => {
@@ -71,16 +74,37 @@ const HeaderBottom = (): JSX.Element => {
           {isSticky && (
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-2">
-                <Link
-                  href={'/login'}
-                  className="border-2 w-12.5 h-12.5 flex items-center justify-center rounded-full border-[#010f1c1a]"
-                >
-                  <ProfileIcon />
-                </Link>
-                <Link href={'/login'}>
-                  <span className="block font-medium">Hello,</span>{' '}
-                  <span className="font-semibold">Sign In</span>
-                </Link>
+                {!isPending && user ? (
+                  <>
+                    <Link
+                      href={'/profile'}
+                      className="border-2 w-12.5 h-12.5 flex items-center justify-center rounded-full border-[#010f1c1a]"
+                    >
+                      <ProfileIcon />
+                    </Link>
+                    <Link href={'/profile'}>
+                      <span className="block font-medium">Hello,</span>{' '}
+                      <span className="font-semibold">
+                        {user.name?.split(' ')[0]}
+                      </span>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href={'/login'}
+                      className="border-2 w-12.5 h-12.5 flex items-center justify-center rounded-full border-[#010f1c1a]"
+                    >
+                      <ProfileIcon />
+                    </Link>
+                    <Link href={'/login'}>
+                      <span className="block font-medium">Hello,</span>{' '}
+                      <span className="font-semibold">
+                        {isPending ? '...' : 'Sign in'}
+                      </span>
+                    </Link>
+                  </>
+                )}
               </div>
 
               <div className="flex items-center gap-5">

@@ -112,15 +112,17 @@ export const userLogin = async (
 
     if (!user) return next(new AuthError(`User not found!`));
 
+    console.log({ user });
+
     // Generate access and refresh tokens
     const accessToken = jwt.sign(
-      { id: user.id, role: 'user' },
+      { id: user._id.toString(), role: 'user' },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: '15m' },
     );
 
     const refreshToken = jwt.sign(
-      { id: user.id, role: 'user' },
+      { id: user._id.toString(), role: 'user' },
       process.env.REFRESH_TOKEN_SECRET as string,
       { expiresIn: '7d' },
     );
@@ -159,7 +161,7 @@ export const refreshToken = async (
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET as string,
     ) as { id: string; role: string };
-    console.log(decoded);
+    console.log({ decoded });
 
     if (!decoded || !decoded.id || !decoded.role)
       throw new JsonWebTokenError('Forbidden! Invalid refresh token.');
@@ -194,8 +196,13 @@ export const getUser = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
-    const user = req.user;
-    res.status(200).json({ success: true, user });
+    const { _id, email, name, password } = req.user as {
+      _id: string;
+      email: string;
+      name: string;
+      password: string;
+    };
+    res.status(200).json({ success: true, user: { id: _id, email, name } });
   } catch (error) {
     next(error);
   }

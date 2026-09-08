@@ -4,5 +4,5 @@ export default function Index() {
    *
    * Note: The corresponding styles are in the ./index.css file.
    */
-  return <div className=""></div>;
+  return <div className="h-2000"></div>;
 }
