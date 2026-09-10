@@ -19,24 +19,87 @@
 // }
 
 model images {
-  id ObjectId @id @map("_id")
+  id      ObjectId @id @map("_id")
   file_id String
   url     String
   altText String?
-  usersId String? @unique @db.ObjectId
-  users   users?  @relation(fields: [usersId], references: [id])
+
+  userId ObjectId? @unique
+  users   users?    @relation(fields: [userId], references: [id])
+
+  shopId ObjectId? @unique
+  shops  shops?    @relation(fields: [shopId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model users {
-  id ObjectId @id @map("_id")
-  name      String
-  email     String   @unique
-  password  String? // Optional field for password for if the user registers with social accounts.
-  following String[]
-  avatar images?
+  id          ObjectId      @id @map("_id")
+  name        String
+  email       String        @unique
+  password    String? // Optional field for password for if the user registers with social accounts.
+  following   String[]
+  avatar      images?
+  shopReviews shopReviews[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model shopReviews {
+  id     ObjectId @id @map("_id")
+  rating Float
+  review String?
+
+  userId ObjectId
+  users  users    @relation(fields: [userId], references: [id])
+
+  shopId ObjectId
+  shops  shops    @relation(fields: [shopId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+type SocialLinks {
+  facebook  String?
+  instagram String?
+  x         String?
+  youtube   String?
+}
+
+model shops {
+  id            ObjectId      @id @map("_id")
+  name          String
+  bio           String?
+  category      String
+  website       String?
+  address       String
+  opening_hours String?
+  coverBanner   String?
+  rating        Float         @default(0)
+  socialLinks   SocialLinks?
+  avatar        images?
+  reviews       shopReviews[]
+
+  sellerId ObjectId @unique
+  sellers   sellers  @relation(fields: [sellerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model sellers {
+  id           ObjectId @id @map("_id")
+  name         String
+  email        String   @unique
+  phone_number String
+  country      String
+  password     String
+  stripeId     String   @unique
+  shop         shops?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
