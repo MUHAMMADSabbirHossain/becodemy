@@ -27,7 +27,8 @@ const Signup = (): JSX.Element => {
   const [canResend, setCanResend] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   const [otp, setOtp] = useState<string[]>(['', '', '', '']);
-  const [userData, setUserData] = useState<FormData | null>(null);
+  const [sellerData, setSellerData] = useState<FormData | null>(null);
+  const [sellerId, setSellerId] = useState<string | null>(null);
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
 
@@ -53,16 +54,23 @@ const Signup = (): JSX.Element => {
   };
 
   const signupMutation = useMutation({
-    mutationFn: async (data: FormData): Promise<void | Response> => {
+    mutationFn: async (data: FormData): Promise<any> => {
+      const countryName = countries.find(
+        (country) => country.code === data.country_code,
+      );
+
       const response = await axios.post(
-        `${NEXT_PUBLIC_SERVER_URI}/api/user-registration`,
-        data,
+        `${NEXT_PUBLIC_SERVER_URI}/api/seller-registration`,
+        {
+          ...data,
+          country: countryName?.name,
+        },
       );
       // console.log(response);
       return response.data;
     },
     onSuccess: (_, formData) => {
-      setUserData(formData);
+      setSellerData(formData);
       setShowOtp(true);
       setCanResend(false);
       setTimer(60);
@@ -71,20 +79,25 @@ const Signup = (): JSX.Element => {
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: async (): Promise<void | Response> => {
-      if (!userData) return;
-      // console.log(userData);
+    mutationFn: async (): Promise<any> => {
+      if (!sellerData) return;
+      // console.log(sellerData);
+
+      const countryName = countries.find(
+        (country) => country.code === sellerData.country_code,
+      );
 
       const response = await axios.post(
-        `${NEXT_PUBLIC_SERVER_URI}/api/verify-user`,
-        { ...userData, otp: otp.join('') },
+        `${NEXT_PUBLIC_SERVER_URI}/api/verify-seller`,
+        { ...sellerData, country: countryName?.name, otp: otp.join('') },
       );
       // console.log(response);
 
       return response.data;
     },
-    onSuccess: () => {
-      router.push('/login');
+    onSuccess: (data) => {
+      setSellerId(data?.seller?._id);
+      setActiveStep(2);
     },
   });
 
@@ -117,7 +130,7 @@ const Signup = (): JSX.Element => {
   };
 
   const resendOtp = () => {
-    if (userData) signupMutation.mutate(userData);
+    if (sellerData) signupMutation.mutate(sellerData);
   };
 
   return (

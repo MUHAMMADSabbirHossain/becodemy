@@ -151,7 +151,11 @@ export const handleForgotPassword = async (
     if (!email) throw new ValidationError(`Email field is required!`);
 
     // Find the user/seller by email
-    const user = await prisma.orm.users.where({ email }).first();
+    const user =
+      userType === 'user'
+        ? await prisma.orm.users.where({ email }).first()
+        : await prisma.orm.sellers.where({ email }).first();
+
     if (!user) throw new ValidationError(`${userType} not found!`);
 
     // Check opt restrictions
@@ -159,7 +163,13 @@ export const handleForgotPassword = async (
     await trackOtpRequests(email, next);
 
     // Generate and send OTP to email
-    await sendOtp(user.name, email, 'forgot-password-user-mail');
+    await sendOtp(
+      user.name,
+      email,
+      userType === 'user'
+        ? 'forgot-password-user-mail'
+        : 'forgot-password-seller-mail',
+    );
 
     return res.status(200).json({
       message: 'OTP sent to email. Please verify your account.',
