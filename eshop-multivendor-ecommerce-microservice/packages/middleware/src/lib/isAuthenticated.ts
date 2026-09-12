@@ -11,8 +11,15 @@ declare global {
         name: string;
         email: string;
         password: string;
-        role: 'user' | 'seller';
       };
+      seller?: {
+        _id: string;
+        name: string;
+        email: string;
+        password: string;
+        shop: string;
+      };
+      role?: 'user' | 'seller';
     }
   }
 }
@@ -24,7 +31,9 @@ export const isAuthenticated = async (
 ): Promise<void | Response> => {
   try {
     const token =
-      req.cookies.accessToken || req.headers.authorization?.split(' ')[1];
+      req.cookies.accessToken ||
+      req.cookies['seller-access-token'] ||
+      req.headers.authorization?.split(' ')[1];
     // console.log(token);
 
     if (!token)
@@ -41,22 +50,40 @@ export const isAuthenticated = async (
         .status(401)
         .json({ message: 'Unauthorized! Invalid access token.' });
 
-    const account = (await prisma.orm.users
-      .where({ _id: decoded.id })
-      .first()) as {
-      _id: string;
-      name: string;
-      email: string;
-      password: string;
-      role: 'user' | 'seller';
-    };
+    let account;
+
+    if (decoded.role !== 'user') {
+      account = (await prisma.orm.users.where({ _id: decoded.id }).first()) as {
+        _id: string;
+        name: string;
+        email: string;
+        password: string;
+        role: 'user' | 'seller';
+      };
+
+      req.user = account;
+    } else {
+      account = (await prisma.orm.sellers
+        .where({ _id: decoded.id })
+        .include({ shop: true })
+        .first()) as {
+        _id: string;
+        name: string;
+        email: string;
+        password: string;
+        role: 'user' | 'seller';
+        shop: string;
+      };
+
+      req.seller = account;
+    }
 
     if (!account)
       return res
         .status(401)
         .json({ message: 'Unauthorized! Account not found.' });
 
-    req.user = account;
+    req.role = decoded.role;
 
     return next();
   } catch (error) {

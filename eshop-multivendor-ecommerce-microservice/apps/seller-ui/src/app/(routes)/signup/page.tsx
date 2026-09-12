@@ -5,10 +5,11 @@ import axios, { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { JSX, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { countries } from '@/utils/countries';
+import CreateShop from '@/shared/modules/auth/CreateShop';
+import StripLogo from '@/assets/svgs/strip-logo';
 
 type FormData = {
   name: string;
@@ -30,7 +31,6 @@ const Signup = (): JSX.Element => {
   const [sellerData, setSellerData] = useState<FormData | null>(null);
   const [sellerId, setSellerId] = useState<string | null>(null);
   const inputRefs = useRef<HTMLInputElement[]>([]);
-  const router = useRouter();
 
   const {
     register,
@@ -91,12 +91,12 @@ const Signup = (): JSX.Element => {
         `${NEXT_PUBLIC_SERVER_URI}/api/verify-seller`,
         { ...sellerData, country: countryName?.name, otp: otp.join('') },
       );
-      // console.log(response);
+      console.log({ response });
 
       return response.data;
     },
     onSuccess: (data) => {
-      setSellerId(data?.seller?._id);
+      setSellerId(data?.data?._id);
       setActiveStep(2);
     },
   });
@@ -131,6 +131,19 @@ const Signup = (): JSX.Element => {
 
   const resendOtp = () => {
     if (sellerData) signupMutation.mutate(sellerData);
+  };
+
+  const connectStripe = () => {
+    try {
+      const response = axios.post(
+        `${NEXT_PUBLIC_SERVER_URI}/api/create-stripe-link`,
+        { sellerId },
+      );
+
+      if (response.data.url) window.location.href = response.data.url;
+    } catch (error) {
+      console.log('Stripe Connect error: ', error);
+    }
   };
 
   return (
@@ -363,6 +376,23 @@ const Signup = (): JSX.Element => {
               </div>
             )}
           </>
+        )}
+
+        {activeStep === 2 && (
+          <CreateShop sellerId={sellerId} setActiveStep={setActiveStep} />
+        )}
+
+        {activeStep === 3 && (
+          <div className="text-center">
+            <h3 className="text-2xl font-semibold">Withdraw Method </h3>
+
+            <button
+              className="w-full mt-4 text-lg bg-blue-500 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+              onClick={connectStripe}
+            >
+              Connect Stripe <StripLogo width={30} height={30} />
+            </button>
+          </div>
         )}
       </div>
     </div>

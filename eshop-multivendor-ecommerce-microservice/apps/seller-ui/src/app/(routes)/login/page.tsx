@@ -30,7 +30,7 @@ const Login = (): JSX.Element => {
   const loginMutaion = useMutation({
     mutationFn: async (data: FormData): Promise<void | Response> => {
       const response = await axios.post(
-        `${NEXT_PUBLIC_SERVER_URI}/api/login-user`,
+        `${NEXT_PUBLIC_SERVER_URI}/api/login-seller`,
         data,
         { withCredentials: true },
       );

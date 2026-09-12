@@ -11,6 +11,9 @@
   "references": [
     {
       "path": "../database/tsconfig.lib.json"
+    },
+    {
+      "path": "../error-handler/tsconfig.lib.json"
     }
   ],
   "exclude": [
