@@ -79,26 +79,26 @@ model shops {
   address       String
   opening_hours String?
   coverBanner   String?
-  rating        Float         @default(0)
+  ratings       Float         @default(0)
   socialLinks   SocialLinks?
   avatar        images?
   reviews       shopReviews[]
 
   sellerId ObjectId @unique
-  sellers   sellers  @relation(fields: [sellerId], references: [id])
+  sellers  sellers  @relation(fields: [sellerId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model sellers {
-  id           ObjectId @id @map("_id")
+  id           ObjectId  @id @map("_id")
   name         String
-  email        String   @unique
+  email        String    @unique
   phone_number String
   country      String
   password     String
-  stripeId     String   @unique
+  stripeId     String?   @unique
   shop         shops?
 
   createdAt DateTime @default(now())

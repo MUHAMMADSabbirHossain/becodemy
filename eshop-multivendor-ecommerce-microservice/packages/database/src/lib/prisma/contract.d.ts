@@ -17,7 +17,7 @@ import type {
 } from '@internal/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a5e58eecc828d1c6c98b6ca94ed0a47ec1b25c1277114d64da116f2ba60f22f7'>;
+  StorageHashBase<'3195c204e5577840d40396fc257cc5bf8080168eadcc264715673f67f8337511'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -55,7 +55,7 @@ export type FieldOutputTypes = {
       readonly phone_number: CodecTypes['mongo/string@1']['output'];
       readonly country: CodecTypes['mongo/string@1']['output'];
       readonly password: CodecTypes['mongo/string@1']['output'];
-      readonly stripeId: CodecTypes['mongo/string@1']['output'];
+      readonly stripeId: CodecTypes['mongo/string@1']['output'] | null;
       readonly createdAt: CodecTypes['mongo/date@1']['output'];
       readonly updatedAt: CodecTypes['mongo/date@1']['output'];
     };
@@ -77,7 +77,7 @@ export type FieldOutputTypes = {
       readonly address: CodecTypes['mongo/string@1']['output'];
       readonly opening_hours: CodecTypes['mongo/string@1']['output'] | null;
       readonly coverBanner: CodecTypes['mongo/string@1']['output'] | null;
-      readonly rating: CodecTypes['mongo/double@1']['output'];
+      readonly ratings: CodecTypes['mongo/double@1']['output'];
       readonly socialLinks: SocialLinksOutput | null;
       readonly sellerId: CodecTypes['mongo/objectId@1']['output'];
       readonly createdAt: CodecTypes['mongo/date@1']['output'];
@@ -113,7 +113,7 @@ export type FieldInputTypes = {
       readonly phone_number: CodecTypes['mongo/string@1']['input'];
       readonly country: CodecTypes['mongo/string@1']['input'];
       readonly password: CodecTypes['mongo/string@1']['input'];
-      readonly stripeId: CodecTypes['mongo/string@1']['input'];
+      readonly stripeId: CodecTypes['mongo/string@1']['input'] | null;
       readonly createdAt: CodecTypes['mongo/date@1']['input'];
       readonly updatedAt: CodecTypes['mongo/date@1']['input'];
     };
@@ -135,7 +135,7 @@ export type FieldInputTypes = {
       readonly address: CodecTypes['mongo/string@1']['input'];
       readonly opening_hours: CodecTypes['mongo/string@1']['input'] | null;
       readonly coverBanner: CodecTypes['mongo/string@1']['input'] | null;
-      readonly rating: CodecTypes['mongo/double@1']['input'];
+      readonly ratings: CodecTypes['mongo/double@1']['input'];
       readonly socialLinks: SocialLinksInput | null;
       readonly sellerId: CodecTypes['mongo/objectId@1']['input'];
       readonly createdAt: CodecTypes['mongo/date@1']['input'];
@@ -222,7 +222,7 @@ type ContractBase = Omit<
                     readonly phone_number: { readonly bsonType: 'string' };
                     readonly country: { readonly bsonType: 'string' };
                     readonly password: { readonly bsonType: 'string' };
-                    readonly stripeId: { readonly bsonType: 'string' };
+                    readonly stripeId: { readonly bsonType: readonly ['null', 'string'] };
                     readonly createdAt: { readonly bsonType: 'date' };
                     readonly updatedAt: { readonly bsonType: 'date' };
                   };
@@ -235,7 +235,6 @@ type ContractBase = Omit<
                     'name',
                     'password',
                     'phone_number',
-                    'stripeId',
                     'updatedAt',
                   ];
                 };
@@ -294,7 +293,7 @@ type ContractBase = Omit<
                     readonly address: { readonly bsonType: 'string' };
                     readonly opening_hours: { readonly bsonType: readonly ['null', 'string'] };
                     readonly coverBanner: { readonly bsonType: readonly ['null', 'string'] };
-                    readonly rating: { readonly bsonType: 'double' };
+                    readonly ratings: { readonly bsonType: 'double' };
                     readonly socialLinks: {
                       readonly oneOf: readonly [
                         { readonly bsonType: 'null' },
@@ -321,7 +320,7 @@ type ContractBase = Omit<
                     'category',
                     'createdAt',
                     'name',
-                    'rating',
+                    'ratings',
                     'sellerId',
                     'updatedAt',
                   ];
@@ -484,7 +483,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
               readonly stripeId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
               readonly createdAt: {
@@ -602,7 +601,7 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
-              readonly rating: {
+              readonly ratings: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
               };
