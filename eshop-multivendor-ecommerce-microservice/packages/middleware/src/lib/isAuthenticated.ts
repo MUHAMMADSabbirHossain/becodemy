@@ -18,6 +18,13 @@ declare global {
         email: string;
         password: string;
         shop: string;
+        phone_number: string;
+        country: string;
+        address: string;
+        opening_hours: string;
+        website: string;
+        category: string;
+        bio: string;
       };
       role?: 'user' | 'seller';
     }
@@ -34,7 +41,6 @@ export const isAuthenticated = async (
       req.cookies.accessToken ||
       req.cookies['seller-access-token'] ||
       req.headers.authorization?.split(' ')[1];
-    // console.log(token);
 
     if (!token)
       return res.status(401).json({ message: 'Unauthorized! Token missing.' });
@@ -52,26 +58,31 @@ export const isAuthenticated = async (
 
     let account;
 
-    if (decoded.role !== 'user') {
+    if (decoded.role === 'user') {
       account = (await prisma.orm.users.where({ _id: decoded.id }).first()) as {
         _id: string;
         name: string;
         email: string;
         password: string;
-        role: 'user' | 'seller';
       };
 
       req.user = account;
     } else {
       account = (await prisma.orm.sellers
         .where({ _id: decoded.id })
-        .include({ shop: true })
         .first()) as {
         _id: string;
         name: string;
         email: string;
         password: string;
-        role: 'user' | 'seller';
+        phone_number: string;
+        address: string;
+        country: string;
+        website: string;
+        opening_hours: string;
+        category: string;
+        bio: string;
+        stripeId: string;
         shop: string;
       };
 
@@ -81,11 +92,11 @@ export const isAuthenticated = async (
     if (!account)
       return res
         .status(401)
-        .json({ message: 'Unauthorized! Account not found.' });
+        .json({ message: 'Unauthorized! Account not found.', data: null });
 
     req.role = decoded.role;
 
-    return next();
+    next();
   } catch (error) {
     next(error);
   }

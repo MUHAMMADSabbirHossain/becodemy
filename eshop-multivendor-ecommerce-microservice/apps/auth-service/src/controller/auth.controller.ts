@@ -113,7 +113,8 @@ export const userLogin = async (
 
     if (!user) return next(new AuthError(`User not found!`));
 
-    // console.log({ user });
+    res.clearCookie('seller-access-token');
+    res.clearCookie('seller-refresh-token');
 
     // Generate access and refresh tokens
     const accessToken = jwt.sign(
@@ -145,15 +146,17 @@ export const userLogin = async (
   }
 };
 
-// Refresh token user
+// Refresh token user/seller
 export const refreshToken = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
-    const refreshToken = req.cookies.refreshToken;
-    // console.log(refreshToken);
+    const refreshToken =
+      req.cookies['refreshToken'] ||
+      req.cookies['seller-refresh-token'] ||
+      req.headers.authorization?.split(' ')[1];
 
     if (!refreshToken)
       throw new AuthError(`Unauthorized! Refresh token not found.`);
@@ -162,17 +165,21 @@ export const refreshToken = async (
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET as string,
     ) as { id: string; role: string };
-    // console.log({ decoded });
 
     if (!decoded || !decoded.id || !decoded.role)
       throw new JsonWebTokenError('Forbidden! Invalid refresh token.');
 
-    // let account;
-    // if(decoded.role === 'user')
-    const user = await prisma.orm.users.where({ id: decoded.id }).first();
-    // console.log(user);
+    let account;
+    if (decoded.role === 'user') {
+      account = await prisma.orm.users.where({ _id: decoded.id }).first();
+    } else if (decoded.role === 'seller') {
+      account = await prisma.orm.sellers
+        .where({ _id: decoded.id })
+        // .include({ shop: true })
+        .first();
+    }
 
-    if (!user) throw new AuthError(`User not found!`);
+    if (!account) throw new AuthError(`User not found!`);
 
     const newAccessToken = jwt.sign(
       { id: decoded.id, role: decoded.role },
@@ -180,7 +187,13 @@ export const refreshToken = async (
       { expiresIn: '15m' },
     );
 
-    setCookie(res, 'accessToken', newAccessToken);
+    if (decoded.role === 'user') {
+      setCookie(res, 'refreshToken', newAccessToken);
+    } else if (decoded.role === 'seller') {
+      setCookie(res, 'seller-refresh-token', newAccessToken);
+    }
+
+    req.role = decoded.role;
 
     res
       .status(200)
@@ -465,6 +478,9 @@ export const loginSeller = async (
     // Verify password
     if (!isMatch)
       return next(new ValidationError(`Invalid email or password!`));
+
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
 
     // Generate access token
     const accessToken = jwt.sign(

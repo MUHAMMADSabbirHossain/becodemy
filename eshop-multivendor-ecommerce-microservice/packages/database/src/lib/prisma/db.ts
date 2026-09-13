@@ -176,7 +176,7 @@ const contractJson = {
                 },
               },
               stripeId: {
-                nullable: false,
+                nullable: true,
                 type: {
                   codecId: 'mongo/string@1',
                   kind: 'scalar',
@@ -345,7 +345,7 @@ const contractJson = {
                   kind: 'scalar',
                 },
               },
-              rating: {
+              ratings: {
                 nullable: false,
                 type: {
                   codecId: 'mongo/double@1',
@@ -656,7 +656,7 @@ const contractJson = {
                       bsonType: 'string',
                     },
                     stripeId: {
-                      bsonType: 'string',
+                      bsonType: ['null', 'string'],
                     },
                     updatedAt: {
                       bsonType: 'date',
@@ -670,7 +670,6 @@ const contractJson = {
                     'name',
                     'password',
                     'phone_number',
-                    'stripeId',
                     'updatedAt',
                   ],
                 },
@@ -765,7 +764,7 @@ const contractJson = {
                     opening_hours: {
                       bsonType: ['null', 'string'],
                     },
-                    rating: {
+                    ratings: {
                       bsonType: 'double',
                     },
                     sellerId: {
@@ -809,7 +808,7 @@ const contractJson = {
                     'category',
                     'createdAt',
                     'name',
-                    'rating',
+                    'ratings',
                     'sellerId',
                     'updatedAt',
                   ],
@@ -884,7 +883,7 @@ const contractJson = {
       },
     },
     storageHash:
-      'a5e58eecc828d1c6c98b6ca94ed0a47ec1b25c1277114d64da116f2ba60f22f7',
+      '3195c204e5577840d40396fc257cc5bf8080168eadcc264715673f67f8337511',
   },
   capabilities: {},
   extensions: {},
