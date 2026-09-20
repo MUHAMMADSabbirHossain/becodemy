@@ -15,8 +15,6 @@ const Layout = ({ children }: { children: React.ReactNode }): JSX.Element => {
       <main className="flex-1">
         <div className="overflow-hidden">{children}</div>
       </main>
-
-      {children}
     </div>
   );
 };
