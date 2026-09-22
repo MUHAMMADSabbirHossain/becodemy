@@ -41,7 +41,11 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/api-gateway-e2e/**/*", "apps/auth-service-e2e/**/*"]
+      "exclude": [
+        "apps/api-gateway-e2e/**/*",
+        "apps/auth-service-e2e/**/*",
+        "apps/product-service-e2e/**/*"
+      ]
     },
     {
       "plugin": "@nx/docker",
