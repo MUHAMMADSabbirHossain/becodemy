@@ -110,7 +110,7 @@ const Page = () => {
         <div className="md:w-[65%]">
           <div className="w-full flex gap-6">
             {/* Product Title Input */}
-            <div className="">
+            <div className="w-2/4">
               <Input
                 label="Product Title *"
                 placeholder="Enter product title"
@@ -121,7 +121,6 @@ const Page = () => {
                   {errors.title.message as string}
                 </p>
               )}
-
               <div className="mt-2">
                 <Input
                   type="textarea"
@@ -146,7 +145,6 @@ const Page = () => {
                   </p>
                 )}
               </div>
-
               <div className="mt-2">
                 <Input
                   label="Tags *"
@@ -161,7 +159,6 @@ const Page = () => {
                   </p>
                 )}
               </div>
-
               <div className="mt-2">
                 <Input
                   label="Warrenty *"
@@ -176,7 +173,6 @@ const Page = () => {
                   </p>
                 )}
               </div>
-
               <div className="mt-2">
                 <Input
                   label="Slug *"
@@ -199,7 +195,6 @@ const Page = () => {
                   })}
                 />
               </div>
-
               <div className="mt-2">
                 <Input
                   label="Brand"
@@ -212,7 +207,6 @@ const Page = () => {
                   </p>
                 )}
               </div>
-
               <div className="mt-2">
                 <ColorSelector control={control} errors={errors} />
               </div>
@@ -220,9 +214,35 @@ const Page = () => {
               <div className="mt-2">
                 <CustomSpecifications control={control} errors={errors} />
               </div>
-
               <div className="mt-2">
                 <CustomProperties control={control} errors={errors} />
+              </div>
+
+              <div className="mt-2">
+                <label className="block font-semibold text-gray-300 mb-1">
+                  Cash On Delivery *
+                </label>
+
+                <select
+                  {...register('cash_on_delivery', {
+                    required: 'Cash on delivery is required',
+                  })}
+                  defaultValue={'yes'}
+                  className="w-full border outline-none border-gray-700 rounded-md p-2 bg-transparent text-white"
+                >
+                  <option value="yes" className="bg-black">
+                    Yes
+                  </option>
+                  <option value="no" className="bg-black">
+                    No
+                  </option>
+                </select>
+
+                {errors.cash_on_delivery && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.cash_on_delivery.message as string}
+                  </p>
+                )}
               </div>
             </div>
           </div>
