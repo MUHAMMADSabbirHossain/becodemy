@@ -6,6 +6,8 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   ColorSelector,
+  CustomProperties,
+  CustomSpecifications,
   Input,
 } from '@eshop-multivendor-ecommerce-microservice/components';
 
@@ -105,10 +107,10 @@ const Page = () => {
         </div>
 
         {/* Right side - form inputs */}
-        <div className="md:m-[65%]">
+        <div className="md:w-[65%]">
           <div className="w-full flex gap-6">
             {/* Product Title Input */}
-            <div className="w-2/4">
+            <div className="">
               <Input
                 label="Product Title *"
                 placeholder="Enter product title"
@@ -213,6 +215,14 @@ const Page = () => {
 
               <div className="mt-2">
                 <ColorSelector control={control} errors={errors} />
+              </div>
+
+              <div className="mt-2">
+                <CustomSpecifications control={control} errors={errors} />
+              </div>
+
+              <div className="mt-2">
+                <CustomProperties control={control} errors={errors} />
               </div>
             </div>
           </div>
