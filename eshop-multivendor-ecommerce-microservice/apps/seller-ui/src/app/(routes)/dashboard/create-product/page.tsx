@@ -245,6 +245,12 @@ const Page = () => {
                 )}
               </div>
             </div>
+
+            <div className="w-2/4">
+              <label className="block font-semibold text-gray-300 mb-1">
+                Category *
+              </label>
+            </div>
           </div>
         </div>
       </div>

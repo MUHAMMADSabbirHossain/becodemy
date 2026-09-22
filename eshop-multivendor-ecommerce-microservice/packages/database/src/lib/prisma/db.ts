@@ -28,6 +28,10 @@ const contractJson = {
       model: 'shops',
       namespace: '__unbound__',
     },
+    site_config: {
+      model: 'site_config',
+      namespace: '__unbound__',
+    },
     users: {
       model: 'users',
       namespace: '__unbound__',
@@ -420,6 +424,51 @@ const contractJson = {
               collection: 'shops',
             },
           },
+          site_config: {
+            fields: {
+              _id: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/objectId@1',
+                  kind: 'scalar',
+                },
+              },
+              categories: {
+                many: true,
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              createdAt: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              subcategories: {
+                many: true,
+                nullable: false,
+                type: {
+                  kind: 'valueObject',
+                  name: 'Subcategory',
+                },
+              },
+              updatedAt: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+            },
+            relations: {},
+            storage: {
+              collection: 'site_config',
+            },
+          },
           users: {
             fields: {
               _id: {
@@ -528,6 +577,25 @@ const contractJson = {
               },
               youtube: {
                 nullable: true,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+            },
+          },
+          Subcategory: {
+            fields: {
+              category: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              items: {
+                many: true,
+                nullable: false,
                 type: {
                   codecId: 'mongo/string@1',
                   kind: 'scalar',
@@ -818,6 +886,61 @@ const contractJson = {
                 validationLevel: 'strict',
               },
             },
+            site_config: {
+              kind: 'mongo-collection',
+              validator: {
+                jsonSchema: {
+                  additionalProperties: false,
+                  bsonType: 'object',
+                  properties: {
+                    _id: {
+                      bsonType: 'objectId',
+                    },
+                    categories: {
+                      bsonType: 'array',
+                      items: {
+                        bsonType: 'string',
+                      },
+                    },
+                    createdAt: {
+                      bsonType: 'date',
+                    },
+                    subcategories: {
+                      bsonType: 'array',
+                      items: {
+                        additionalProperties: false,
+                        bsonType: 'object',
+                        properties: {
+                          category: {
+                            bsonType: 'string',
+                          },
+                          items: {
+                            bsonType: 'array',
+                            items: {
+                              bsonType: 'string',
+                            },
+                          },
+                        },
+                        required: ['category', 'items'],
+                      },
+                    },
+                    updatedAt: {
+                      bsonType: 'date',
+                    },
+                  },
+                  required: [
+                    '_id',
+                    'categories',
+                    'createdAt',
+                    'subcategories',
+                    'updatedAt',
+                  ],
+                },
+                kind: 'mongo-validator',
+                validationAction: 'error',
+                validationLevel: 'strict',
+              },
+            },
             users: {
               indexes: [
                 {
@@ -883,7 +1006,7 @@ const contractJson = {
       },
     },
     storageHash:
-      '3195c204e5577840d40396fc257cc5bf8080168eadcc264715673f67f8337511',
+      'eada92a330843c2270580a8f9b8a7cd6dca8ecf04402e383808bf736afb85860',
   },
   capabilities: {},
   extensions: {},

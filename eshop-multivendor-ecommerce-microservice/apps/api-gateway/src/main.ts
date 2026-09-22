@@ -12,6 +12,7 @@ import morgan from 'morgan';
 // import axios from 'axios';
 import cookieParser from 'cookie-parser';
 import { ipKeyGenerator, rateLimit } from 'express-rate-limit';
+import initializeSiteConfig from './libs/initializeSiteConfig';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -60,6 +61,14 @@ app.get('/gateway-health', (req, res) => {
 app.use('/', proxy('http://localhost:6001'));
 
 const server = app.listen(port, () => {
-  // console.log(`Listening at http://localhost:${port}/api`);
+  console.log(`Listening at http://localhost:${port}/api`);
+
+  try {
+    initializeSiteConfig();
+
+    console.log('Site config Initialized successfully.');
+  } catch (error) {
+    console.log('Failed to initializing site config: ', error);
+  }
 });
 server.on('error', console.error);

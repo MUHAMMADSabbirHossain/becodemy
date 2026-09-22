@@ -104,3 +104,19 @@ model sellers {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+type Subcategory {
+  category String
+  items    String[]
+}
+
+model site_config {
+  id            ObjectId      @id @map("_id")
+  categories    String[]
+  subcategories Subcategory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_config")
+}

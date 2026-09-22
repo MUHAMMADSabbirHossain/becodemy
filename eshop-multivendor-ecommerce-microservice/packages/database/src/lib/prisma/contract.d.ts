@@ -17,7 +17,7 @@ import type {
 } from '@internal/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'3195c204e5577840d40396fc257cc5bf8080168eadcc264715673f67f8337511'>;
+  StorageHashBase<'eada92a330843c2270580a8f9b8a7cd6dca8ecf04402e383808bf736afb85860'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -35,6 +35,14 @@ export type SocialLinksInput = {
   readonly instagram: CodecTypes['mongo/string@1']['input'] | null;
   readonly x: CodecTypes['mongo/string@1']['input'] | null;
   readonly youtube: CodecTypes['mongo/string@1']['input'] | null;
+};
+export type SubcategoryOutput = {
+  readonly category: CodecTypes['mongo/string@1']['output'];
+  readonly items: ReadonlyArray<CodecTypes['mongo/string@1']['output']>;
+};
+export type SubcategoryInput = {
+  readonly category: CodecTypes['mongo/string@1']['input'];
+  readonly items: ReadonlyArray<CodecTypes['mongo/string@1']['input']>;
 };
 export type FieldOutputTypes = {
   readonly __unbound__: {
@@ -80,6 +88,13 @@ export type FieldOutputTypes = {
       readonly ratings: CodecTypes['mongo/double@1']['output'];
       readonly socialLinks: SocialLinksOutput | null;
       readonly sellerId: CodecTypes['mongo/objectId@1']['output'];
+      readonly createdAt: CodecTypes['mongo/date@1']['output'];
+      readonly updatedAt: CodecTypes['mongo/date@1']['output'];
+    };
+    readonly site_config: {
+      readonly _id: CodecTypes['mongo/objectId@1']['output'];
+      readonly categories: ReadonlyArray<CodecTypes['mongo/string@1']['output']>;
+      readonly subcategories: ReadonlyArray<SubcategoryOutput>;
       readonly createdAt: CodecTypes['mongo/date@1']['output'];
       readonly updatedAt: CodecTypes['mongo/date@1']['output'];
     };
@@ -138,6 +153,13 @@ export type FieldInputTypes = {
       readonly ratings: CodecTypes['mongo/double@1']['input'];
       readonly socialLinks: SocialLinksInput | null;
       readonly sellerId: CodecTypes['mongo/objectId@1']['input'];
+      readonly createdAt: CodecTypes['mongo/date@1']['input'];
+      readonly updatedAt: CodecTypes['mongo/date@1']['input'];
+    };
+    readonly site_config: {
+      readonly _id: CodecTypes['mongo/objectId@1']['input'];
+      readonly categories: ReadonlyArray<CodecTypes['mongo/string@1']['input']>;
+      readonly subcategories: ReadonlyArray<SubcategoryInput>;
       readonly createdAt: CodecTypes['mongo/date@1']['input'];
       readonly updatedAt: CodecTypes['mongo/date@1']['input'];
     };
@@ -329,6 +351,49 @@ type ContractBase = Omit<
                 readonly validationAction: 'error';
               };
             };
+            readonly site_config: {
+              readonly kind: 'mongo-collection';
+              readonly validator: {
+                readonly kind: 'mongo-validator';
+                readonly jsonSchema: {
+                  readonly bsonType: 'object';
+                  readonly properties: {
+                    readonly _id: { readonly bsonType: 'objectId' };
+                    readonly categories: {
+                      readonly bsonType: 'array';
+                      readonly items: { readonly bsonType: 'string' };
+                    };
+                    readonly subcategories: {
+                      readonly bsonType: 'array';
+                      readonly items: {
+                        readonly bsonType: 'object';
+                        readonly properties: {
+                          readonly category: { readonly bsonType: 'string' };
+                          readonly items: {
+                            readonly bsonType: 'array';
+                            readonly items: { readonly bsonType: 'string' };
+                          };
+                        };
+                        readonly additionalProperties: false;
+                        readonly required: readonly ['category', 'items'];
+                      };
+                    };
+                    readonly createdAt: { readonly bsonType: 'date' };
+                    readonly updatedAt: { readonly bsonType: 'date' };
+                  };
+                  readonly additionalProperties: false;
+                  readonly required: readonly [
+                    '_id',
+                    'categories',
+                    'createdAt',
+                    'subcategories',
+                    'updatedAt',
+                  ];
+                };
+                readonly validationLevel: 'strict';
+                readonly validationAction: 'error';
+              };
+            };
             readonly users: {
               readonly kind: 'mongo-collection';
               readonly indexes: readonly [
@@ -389,6 +454,10 @@ type ContractBase = Omit<
     readonly sellers: {
       readonly namespace: '__unbound__' & NamespaceId;
       readonly model: 'sellers';
+    };
+    readonly site_config: {
+      readonly namespace: '__unbound__' & NamespaceId;
+      readonly model: 'site_config';
     };
   };
   readonly domain: {
@@ -659,6 +728,34 @@ type ContractBase = Omit<
             };
             readonly storage: { readonly collection: 'shops' };
           };
+          readonly site_config: {
+            readonly fields: {
+              readonly _id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly categories: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+                readonly many: true;
+              };
+              readonly subcategories: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'valueObject'; readonly name: 'Subcategory' };
+                readonly many: true;
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: { readonly collection: 'site_config' };
+          };
           readonly users: {
             readonly fields: {
               readonly _id: {
@@ -739,6 +836,19 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Subcategory: {
+            readonly fields: {
+              readonly category: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly items: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+                readonly many: true;
+              };
+            };
+          };
         };
       };
     };
@@ -764,6 +874,19 @@ type ContractBase = Omit<
         readonly youtube: {
           readonly nullable: true;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+        };
+      };
+    };
+    readonly Subcategory: {
+      readonly fields: {
+        readonly category: {
+          readonly nullable: false;
+          readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+        };
+        readonly items: {
+          readonly nullable: false;
+          readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+          readonly many: true;
         };
       };
     };
