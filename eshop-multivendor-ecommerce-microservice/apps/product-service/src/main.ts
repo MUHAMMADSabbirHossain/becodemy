@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import * as path from 'path';
+import router from './routes/product.routes';
 // import swaggerUi from 'swagger-ui-express';
 
 // const swaggerDocument = require('./swagger-output.json');
@@ -28,12 +29,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
-  res.send({ message: 'Hello API!' });
+  res.send({ message: 'Hello Product API!' });
 });
 
 app.get('/health-check', (req, res) => {
   res.send({
-    message: `Welcome to auth-service! Health check - ${Date.now()}`,
+    message: `Welcome to product-service! Health check - ${Date.now()}`,
   });
 });
 
@@ -43,12 +44,12 @@ app.get('/health-check', (req, res) => {
 // });
 
 // Routes
-// app.use('/api', router);
+app.use('/api', router);
 
 app.use(errorMiddleware);
 
 const server = app.listen(port, () => {
-  // console.log(`Auth service is listening at http://localhost:${port}/api`);
-  // console.log(`Swagger docs at http://localhost:${port}/api-docs`);
+  console.log(`Product service is listening at http://localhost:${port}/api`);
+  console.log(`Swagger docs at http://localhost:${port}/api-docs`);
 });
 server.on('error', (err) => console.error('Server error', err));

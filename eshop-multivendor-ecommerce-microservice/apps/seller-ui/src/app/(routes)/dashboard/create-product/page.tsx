@@ -2,14 +2,16 @@
 
 import ImagePlaceHolder from '@/shared/image-placeholder';
 import { ChevronRight } from 'lucide-react';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   ColorSelector,
   CustomProperties,
   CustomSpecifications,
   Input,
 } from '@eshop-multivendor-ecommerce-microservice/components';
+import { useQuery } from '@tanstack/react-query';
+import axiosInstance from '@/utils/axiosInstance';
 
 const Page = () => {
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
@@ -25,6 +27,32 @@ const Page = () => {
     setValue,
     formState: { errors },
   } = useForm();
+
+  const { data, isPending, isError } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get('/product/api/get-categories');
+        // console.log(res.data);
+
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+  });
+
+  const categories = data?.categories || [];
+  const subcategoriesData = data?.subCategories || {};
+  const selectedCategory = watch('category');
+  const regularPrice = watch('regular_price');
+  console.log(categories, subcategoriesData);
+
+  const subcategories = useMemo(() => {
+    return selectedCategory ? subcategoriesData[selectedCategory] || [] : [];
+  }, [selectedCategory, subcategoriesData]);
 
   const onSubmit = (data: any) => {
     console.log(data);
@@ -250,6 +278,79 @@ const Page = () => {
               <label className="block font-semibold text-gray-300 mb-1">
                 Category *
               </label>
+
+              {isPending ? (
+                <p>Loading categories...</p>
+              ) : isError ? (
+                <p className="text-red-500 text-sm mt-1">
+                  Failed to load categories
+                </p>
+              ) : (
+                <Controller
+                  name="category"
+                  control={control}
+                  rules={{ required: 'Category is required' }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full border outline-none border-gray-700 bg-transparent rounded-md p-2 text-white"
+                    >
+                      <option value="" className="bg-black">
+                        Select Category
+                      </option>
+                      {categories.map((category: any) => (
+                        <option
+                          key={category}
+                          value={category}
+                          className="bg-black"
+                        >
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+              )}
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.category.message as string}
+                </p>
+              )}
+
+              <div className="mt-2">
+                <label className="block font-semibold text-gray-300 mb-1">
+                  Sub Category *
+                </label>
+                <Controller
+                  name="subcategory"
+                  control={control}
+                  rules={{ required: 'Sub Category is required' }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full border outline-none border-gray-700 bg-transparent rounded-md p-2 text-white"
+                    >
+                      <option value="" className="bg-black">
+                        Select Sub Category
+                      </option>
+                      {subcategories.map((subcategory: any) => (
+                        <option
+                          key={subcategory}
+                          value={subcategory}
+                          className="bg-black"
+                        >
+                          {subcategory}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+                {errors.subcategory && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.subcategory.message as string}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

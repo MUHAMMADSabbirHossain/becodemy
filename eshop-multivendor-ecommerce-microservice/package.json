@@ -13,6 +13,7 @@
     "reset": "npx nx reset",
     "contract:emit": "npx prisma contract emit --verbose",
     "auth-docs": "node apps/auth-service/src/swagger.ts",
+    "product-docs": "node apps/product-service/src/swagger.ts",
     "plugin:list": "npx nx report",
     "user-ui": "npx nx run-many --target=dev --all --projects=user-ui",
     "seller-ui": "npx nx run-many --target=dev --all --projects=seller-ui"

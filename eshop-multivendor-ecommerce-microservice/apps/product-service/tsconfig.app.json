@@ -11,6 +11,9 @@
   "references": [
     {
       "path": "../../packages/error-handler/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/database/tsconfig.lib.json"
     }
   ]
 }

@@ -12,24 +12,18 @@ const initializeSiteConfig = async (): Promise<void> => {
           'Home & Kitchen',
           'Sports & Fitness',
         ],
-        subcategories: [
-          {
-            category: 'Electronics',
-            items: ['Mobiles', 'Laptops', 'Tablets', 'Accessories', 'Gaming'],
-          },
-          {
-            category: 'Fashion',
-            items: ['Menswear', 'Womenswear', 'Footwear', 'Accessories'],
-          },
-          {
-            category: 'Home & Kitchen',
-            items: ['Kitchenware', 'Furniture', 'Decor', 'Appliances'],
-          },
-          {
-            category: 'Sports & Fitness',
-            items: ['Gym Equipment', 'Outdoor Gear', 'Wearables'],
-          },
-        ],
+        subCategories: {
+          Electronics: [
+            'Mobiles',
+            'Laptops',
+            'Tablets',
+            'Accessories',
+            'Gaming',
+          ],
+          Fashion: ['Menswear', 'Womenswear', 'Footwear', 'Accessories'],
+          'Home & Kitchen': ['Kitchenware', 'Furniture', 'Decor', 'Appliances'],
+          'Sports & Fitness': ['Gym Equipment', 'Outdoor Gear', 'Wearables'],
+        },
       });
     }
   } catch (error) {
