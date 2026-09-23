@@ -5,3 +5,4 @@ export * from './lib/input/index';
 export * from './lib/color-selector/index';
 export * from './lib/custom-specifications/index';
 export * from './lib/custom-properties/index';
+export * from './lib/rich-text-editor/index';

@@ -9,6 +9,7 @@ import {
   CustomProperties,
   CustomSpecifications,
   Input,
+  RichTextEditor,
 } from '@eshop-multivendor-ecommerce-microservice/components';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '@/utils/axiosInstance';
@@ -48,7 +49,7 @@ const Page = () => {
   const subcategoriesData = data?.subCategories || {};
   const selectedCategory = watch('category');
   const regularPrice = watch('regular_price');
-  console.log(categories, subcategoriesData);
+  // console.log(categories, subcategoriesData);
 
   const subcategories = useMemo(() => {
     return selectedCategory ? subcategoriesData[selectedCategory] || [] : [];
@@ -348,6 +349,40 @@ const Page = () => {
                 {errors.subcategory && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.subcategory.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <label className="block font-semibold text-gray-300 mb-1">
+                  Detailed Description * (Min 100 words)
+                </label>
+                <Controller
+                  name="detailed_description"
+                  control={control}
+                  rules={{
+                    required: 'Detailed description is required!',
+                    validate: (value) => {
+                      const wordCount = value
+                        ?.split(/\s+/)
+                        .filter((word: string) => word).length;
+
+                      return (
+                        wordCount >= 100 ||
+                        'Detailed description must be at least 100 words long.'
+                      );
+                    },
+                  }}
+                  render={({ field }) => (
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+                {errors.detailed_description && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.detailed_description.message as string}
                   </p>
                 )}
               </div>
