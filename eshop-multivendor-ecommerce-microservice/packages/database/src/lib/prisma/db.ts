@@ -12,6 +12,10 @@ const contractJson = {
   profileHash:
     '251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3',
   roots: {
+    discount_codes: {
+      model: 'discount_codes',
+      namespace: '__unbound__',
+    },
     images: {
       model: 'images',
       namespace: '__unbound__',
@@ -41,6 +45,82 @@ const contractJson = {
     namespaces: {
       __unbound__: {
         models: {
+          discount_codes: {
+            fields: {
+              _id: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/objectId@1',
+                  kind: 'scalar',
+                },
+              },
+              createdAt: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              discountCode: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              discountType: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              discountValue: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/double@1',
+                  kind: 'scalar',
+                },
+              },
+              public_name: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              sellerId: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/objectId@1',
+                  kind: 'scalar',
+                },
+              },
+              updatedAt: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+            },
+            relations: {
+              sellers: {
+                cardinality: 'N:1',
+                on: {
+                  localFields: ['sellerId'],
+                  targetFields: ['_id'],
+                },
+                to: {
+                  model: 'sellers',
+                  namespace: '__unbound__',
+                },
+              },
+            },
+            storage: {
+              collection: 'discount_codes',
+            },
+          },
           images: {
             fields: {
               _id: {
@@ -612,6 +692,66 @@ const contractJson = {
       __unbound__: {
         entries: {
           collection: {
+            discount_codes: {
+              indexes: [
+                {
+                  keys: [
+                    {
+                      direction: 1,
+                      field: 'discountCode',
+                    },
+                  ],
+                  kind: 'mongo-index',
+                  unique: true,
+                },
+              ],
+              kind: 'mongo-collection',
+              validator: {
+                jsonSchema: {
+                  additionalProperties: false,
+                  bsonType: 'object',
+                  properties: {
+                    _id: {
+                      bsonType: 'objectId',
+                    },
+                    createdAt: {
+                      bsonType: 'date',
+                    },
+                    discountCode: {
+                      bsonType: 'string',
+                    },
+                    discountType: {
+                      bsonType: 'string',
+                    },
+                    discountValue: {
+                      bsonType: 'double',
+                    },
+                    public_name: {
+                      bsonType: 'string',
+                    },
+                    sellerId: {
+                      bsonType: 'objectId',
+                    },
+                    updatedAt: {
+                      bsonType: 'date',
+                    },
+                  },
+                  required: [
+                    '_id',
+                    'createdAt',
+                    'discountCode',
+                    'discountType',
+                    'discountValue',
+                    'public_name',
+                    'sellerId',
+                    'updatedAt',
+                  ],
+                },
+                kind: 'mongo-validator',
+                validationAction: 'error',
+                validationLevel: 'strict',
+              },
+            },
             images: {
               indexes: [
                 {
@@ -1006,7 +1146,7 @@ const contractJson = {
       },
     },
     storageHash:
-      'eada92a330843c2270580a8f9b8a7cd6dca8ecf04402e383808bf736afb85860',
+      '8d719e4c8a030a778b1d3c3eef04f3009b52efb630cfe5cc0727cba0cea99a10',
   },
   capabilities: {},
   extensions: {},

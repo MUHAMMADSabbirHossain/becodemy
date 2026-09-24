@@ -17,7 +17,7 @@ import axiosInstance from '@/utils/axiosInstance';
 
 const Page = () => {
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
-  const [isChanged, setIsChanged] = useState<boolean>(false);
+  const [isChanged, setIsChanged] = useState<boolean>(true);
   const [images, setImages] = useState<(File | null)[]>([null]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -90,6 +90,10 @@ const Page = () => {
     });
 
     setValue('images', images);
+  };
+
+  const handleSaveDraft = () => {
+    //
   };
 
   return (
@@ -490,9 +494,36 @@ const Page = () => {
               <div className="mt-2">
                 <SizeSelector control={control} errors={errors} />
               </div>
+
+              <div className="mt-3">
+                <label className="block font-semibold text-gray-300 mb-1">
+                  {' '}
+                  Select Discount Codes (Optional)
+                </label>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 flex justify-end gap-3">
+        {isChanged && (
+          <button
+            type="button"
+            onClick={handleSaveDraft}
+            className="px-4 py-2 bg-gray-700 text-white rounded-lg "
+          >
+            Save Draft
+          </button>
+        )}
+
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md"
+          disabled={loading}
+        >
+          {loading ? 'Creating...' : 'Create'}
+        </button>
       </div>
     </form>
   );

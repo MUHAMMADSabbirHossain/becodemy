@@ -15,7 +15,6 @@ import {
   BellPlus,
   BellRing,
   CalendarPlus,
-  Headset,
   ListOrdered,
   LogOut,
   Mail,
@@ -185,8 +184,11 @@ const SidebarWrapper = () => {
                 href="/dashboard/notifications"
                 isActive={activeSidebar === '/dashboard/notifications'}
               />
+            </SidebarMenu>
+
+            <SidebarMenu title="Extras">
               <SidebarItem
-                title="Extras"
+                title="Discount Codes"
                 icon={
                   <TicketPercent
                     size={26}

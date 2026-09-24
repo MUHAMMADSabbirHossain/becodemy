@@ -17,7 +17,7 @@ import type {
 } from '@internal/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'eada92a330843c2270580a8f9b8a7cd6dca8ecf04402e383808bf736afb85860'>;
+  StorageHashBase<'8d719e4c8a030a778b1d3c3eef04f3009b52efb630cfe5cc0727cba0cea99a10'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -46,6 +46,16 @@ export type SubcategoryInput = {
 };
 export type FieldOutputTypes = {
   readonly __unbound__: {
+    readonly discount_codes: {
+      readonly _id: CodecTypes['mongo/objectId@1']['output'];
+      readonly public_name: CodecTypes['mongo/string@1']['output'];
+      readonly discountType: CodecTypes['mongo/string@1']['output'];
+      readonly discountValue: CodecTypes['mongo/double@1']['output'];
+      readonly discountCode: CodecTypes['mongo/string@1']['output'];
+      readonly sellerId: CodecTypes['mongo/objectId@1']['output'];
+      readonly createdAt: CodecTypes['mongo/date@1']['output'];
+      readonly updatedAt: CodecTypes['mongo/date@1']['output'];
+    };
     readonly images: {
       readonly _id: CodecTypes['mongo/objectId@1']['output'];
       readonly file_id: CodecTypes['mongo/string@1']['output'];
@@ -111,6 +121,16 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly __unbound__: {
+    readonly discount_codes: {
+      readonly _id: CodecTypes['mongo/objectId@1']['input'];
+      readonly public_name: CodecTypes['mongo/string@1']['input'];
+      readonly discountType: CodecTypes['mongo/string@1']['input'];
+      readonly discountValue: CodecTypes['mongo/double@1']['input'];
+      readonly discountCode: CodecTypes['mongo/string@1']['input'];
+      readonly sellerId: CodecTypes['mongo/objectId@1']['input'];
+      readonly createdAt: CodecTypes['mongo/date@1']['input'];
+      readonly updatedAt: CodecTypes['mongo/date@1']['input'];
+    };
     readonly images: {
       readonly _id: CodecTypes['mongo/objectId@1']['input'];
       readonly file_id: CodecTypes['mongo/string@1']['input'];
@@ -184,6 +204,47 @@ type ContractBase = Omit<
         readonly kind: 'mongo-database';
         readonly entries: {
           readonly collection: {
+            readonly discount_codes: {
+              readonly kind: 'mongo-collection';
+              readonly indexes: readonly [
+                {
+                  readonly kind: 'mongo-index';
+                  readonly keys: readonly [
+                    { readonly field: 'discountCode'; readonly direction: 1 },
+                  ];
+                  readonly unique: true;
+                },
+              ];
+              readonly validator: {
+                readonly kind: 'mongo-validator';
+                readonly jsonSchema: {
+                  readonly bsonType: 'object';
+                  readonly properties: {
+                    readonly _id: { readonly bsonType: 'objectId' };
+                    readonly public_name: { readonly bsonType: 'string' };
+                    readonly discountType: { readonly bsonType: 'string' };
+                    readonly discountValue: { readonly bsonType: 'double' };
+                    readonly discountCode: { readonly bsonType: 'string' };
+                    readonly sellerId: { readonly bsonType: 'objectId' };
+                    readonly createdAt: { readonly bsonType: 'date' };
+                    readonly updatedAt: { readonly bsonType: 'date' };
+                  };
+                  readonly additionalProperties: false;
+                  readonly required: readonly [
+                    '_id',
+                    'createdAt',
+                    'discountCode',
+                    'discountType',
+                    'discountValue',
+                    'public_name',
+                    'sellerId',
+                    'updatedAt',
+                  ];
+                };
+                readonly validationLevel: 'strict';
+                readonly validationAction: 'error';
+              };
+            };
             readonly images: {
               readonly kind: 'mongo-collection';
               readonly indexes: readonly [
@@ -459,11 +520,65 @@ type ContractBase = Omit<
       readonly namespace: '__unbound__' & NamespaceId;
       readonly model: 'site_config';
     };
+    readonly discount_codes: {
+      readonly namespace: '__unbound__' & NamespaceId;
+      readonly model: 'discount_codes';
+    };
   };
   readonly domain: {
     readonly namespaces: {
       readonly __unbound__: {
         readonly models: {
+          readonly discount_codes: {
+            readonly fields: {
+              readonly _id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly public_name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly discountType: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly discountValue: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
+              };
+              readonly discountCode: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly sellerId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+            };
+            readonly relations: {
+              readonly sellers: {
+                readonly to: {
+                  readonly namespace: '__unbound__' & NamespaceId;
+                  readonly model: 'sellers';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['sellerId'];
+                  readonly targetFields: readonly ['_id'];
+                };
+              };
+            };
+            readonly storage: { readonly collection: 'discount_codes' };
+          };
           readonly images: {
             readonly fields: {
               readonly _id: {
