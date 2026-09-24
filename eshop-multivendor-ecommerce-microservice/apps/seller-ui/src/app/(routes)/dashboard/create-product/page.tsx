@@ -10,6 +10,7 @@ import {
   CustomSpecifications,
   Input,
   RichTextEditor,
+  SizeSelector,
 } from '@eshop-multivendor-ecommerce-microservice/components';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '@/utils/axiosInstance';
@@ -385,6 +386,109 @@ const Page = () => {
                     {errors.detailed_description.message as string}
                   </p>
                 )}
+              </div>
+
+              <div className="mt-2">
+                <Input
+                  label="Video URL"
+                  placeholder="https://www.youtube.com/embed/VIDEO_ID"
+                  {...(register('video_url'),
+                  {
+                    pattern: {
+                      value:
+                        /^https?:\/\/(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})$/,
+                      message:
+                        'Invalid YouTube embed video URL! Use formate: https://www.youtube.com/embed/VIDEO_ID',
+                    },
+                  })}
+                />
+                {errors.video_url && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.video_url.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <Input
+                  label="Reguler Price *"
+                  placeholder="99.99"
+                  {...register('regular_price', {
+                    required: 'Regular price is required',
+                    valueAsNumber: true,
+                    min: {
+                      value: 1,
+                      message: 'Regular price must be at least 1',
+                    },
+                    validate: (value) =>
+                      !isNaN(value) || 'Only numbers are allowed',
+                  })}
+                />
+                {errors.regular_price && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.regular_price.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <Input
+                  label="Sale Price *"
+                  placeholder="100.00"
+                  {...register('sale_price', {
+                    required: 'Sale price is required',
+                    valueAsNumber: true,
+                    min: {
+                      value: 1,
+                      message: 'Sale price must be at least 1',
+                    },
+                    validate: (value) => {
+                      if (isNaN(value)) return 'Only numbers are allowed';
+
+                      if (regularPrice && value >= regularPrice)
+                        return 'Sale price must be less than regular price';
+                    },
+                  })}
+                />
+                {errors.sale_price && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.sale_price.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <Input
+                  label="Stock *"
+                  placeholder="100"
+                  {...register('stock', {
+                    required: 'Stock is required',
+                    valueAsNumber: true,
+                    min: {
+                      value: 1,
+                      message: 'Stock must be at least 1',
+                    },
+                    max: {
+                      value: 1000,
+                      message: 'Stock must be at most 1000',
+                    },
+                    validate: (value) => {
+                      if (isNaN(value)) return 'Only numbers are allowed';
+
+                      if (!Number.isInteger(value))
+                        return 'Stock must be an integer';
+                    },
+                  })}
+                />
+                {errors.stock && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.stock.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <SizeSelector control={control} errors={errors} />
               </div>
             </div>
           </div>
