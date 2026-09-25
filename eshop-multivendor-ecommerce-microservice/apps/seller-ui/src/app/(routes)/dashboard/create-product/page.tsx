@@ -46,6 +46,19 @@ const Page = () => {
     retry: 2,
   });
 
+  const {
+    data: discountCodes = [],
+    isPending: discountLoading,
+    isError: discountError,
+  } = useQuery({
+    queryKey: ['discountCodes'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/product/api/get-discount-codes');
+
+      return res?.data?.discount_codes || [];
+    },
+  });
+
   const categories = data?.categories || [];
   const subcategoriesData = data?.subCategories || {};
   const selectedCategory = watch('category');
@@ -497,9 +510,41 @@ const Page = () => {
 
               <div className="mt-3">
                 <label className="block font-semibold text-gray-300 mb-1">
-                  {' '}
                   Select Discount Codes (Optional)
                 </label>
+                {discountLoading ? (
+                  <p className="text-gray-400">Loading discount codes...</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {discountCodes.map((code: any) => (
+                      <button
+                        type="button"
+                        key={code._id}
+                        className={`px-4 py-1 font-semibold  text-sm text-white rounded-md ${
+                          watch('discountCodes')?.includes(code._id)
+                            ? 'bg-blue-600 text-white border border-blue-600'
+                            : 'bg-gray-600 text-white border border-gray-700 hover:bg-gray-700'
+                        }`}
+                        onClick={() => {
+                          const currentSelections =
+                            watch('discountCodes') || [];
+                          const updatedSelections = currentSelections.includes(
+                            code._id,
+                          )
+                            ? currentSelections.filter(
+                                (_id: string) => _id !== code._id,
+                              )
+                            : [...currentSelections, code._id];
+
+                          setValue('discountCodes', updatedSelections);
+                        }}
+                      >
+                        {code?.public_name} ({code?.discountValue}{' '}
+                        {code.discountType === 'percentage' ? '%' : '$'})
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
