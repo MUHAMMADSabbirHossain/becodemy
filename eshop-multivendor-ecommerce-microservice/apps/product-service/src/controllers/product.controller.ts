@@ -32,7 +32,7 @@ export const createDiscountCodes = async (
   next: NextFunction,
 ) => {
   try {
-    const { public_name, discountType, discountCode } = req.body;
+    const { public_name, discountType, discountValue, discountCode } = req.body;
 
     const isDiscountCodeExists = await prisma.orm.discount_codes
       .where({ discountCode })
@@ -48,16 +48,18 @@ export const createDiscountCodes = async (
     const discount_code = await prisma.orm.discount_codes.create({
       public_name,
       discountType,
-      discountValue: parseFloat(discountCode),
+      discountValue: parseFloat(discountValue),
       discountCode,
-      sellerId: req.seller.id,
+      sellerId: req.seller._id,
     });
 
     return res.status(201).json({
       success: true,
+      message: 'Discount code created successfully!',
       discount_code,
     });
   } catch (error) {
+    console.log(error);
     return next(error);
   }
 };
@@ -69,11 +71,15 @@ export const getDiscountCodes = async (
   next: NextFunction,
 ) => {
   try {
-    const discount_codes = await prisma.orm.discount_codes.where({
-      sellerId: req.seller.id,
-    });
+    const discount_codes = await prisma.orm.discount_codes
+      .where({
+        sellerId: req.seller._id,
+      })
+      .all();
 
     return res.status(200).json({
+      success: true,
+      message: 'Discount codes fetched successfully!',
       discount_codes,
     });
   } catch (error) {
@@ -89,10 +95,10 @@ export const deleteDiscountCodes = async (
 ) => {
   try {
     const { id } = req.params;
-    const sellerId = req.seller?.id;
+    const sellerId = req.seller?._id;
 
     const discount_code = await prisma.orm.discount_codes
-      .where({ id, sellerId })
+      .where({ _id: id, sellerId })
       .first();
 
     if (!discount_code)
@@ -101,7 +107,7 @@ export const deleteDiscountCodes = async (
     if (discount_code.sellerId !== sellerId)
       return next(new ValidationError('Unauthorized!'));
 
-    await prisma.orm.discount_codes.where({ id }).delete();
+    await prisma.orm.discount_codes.where({ _id: id }).delete();
 
     return res.status(200).json({
       success: true,
