@@ -134,8 +134,6 @@ export const uploadProductImage = async (
 
     if (!fileName) return next(new ValidationError('File name is required!'));
 
-    console.log(fileName);
-
     const response = await imageKit.files.upload({
       file: await toFile(
         Buffer.from(fileName.replace(/^data:image\/\w+;base64,/, ''), 'base64'),
@@ -143,8 +141,6 @@ export const uploadProductImage = async (
       fileName: `product-${Date.now()}.jpg`,
       folder: '/products',
     });
-
-    console.log(response);
 
     return res.status(201).json({
       success: true,

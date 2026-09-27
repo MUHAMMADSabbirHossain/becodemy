@@ -7,14 +7,18 @@ import React, { JSX, useState } from 'react';
 type Props = {
   size: string;
   small?: boolean;
+  pictureUploadingLoader?: boolean;
   onImageChange: (file: File | null, index: number) => void;
   onRemove?: (index: number) => void;
   defaultImage?: string | null;
   setOpenImageModal?: (openImageModal: boolean) => void;
   index?: any;
+  setSelectedImage?: (e: string) => void;
+  images?: any;
 };
 
 const ImagePlaceHolder = ({
+  pictureUploadingLoader,
   size,
   small,
   onImageChange,
@@ -22,6 +26,8 @@ const ImagePlaceHolder = ({
   defaultImage = null,
   index = null,
   setOpenImageModal,
+  setSelectedImage,
+  images,
 }: Props): JSX.Element => {
   const [imagePreview, setImagePreview] = useState<string | null>(defaultImage);
 
@@ -53,6 +59,7 @@ const ImagePlaceHolder = ({
         <>
           <button
             type="button"
+            disabled={pictureUploadingLoader}
             className="absolute top-3 right-3 p-2 rounded bg-red-600 shadow-lg cursor-pointer"
             onClick={() => onRemove && onRemove(index)}
           >
@@ -60,8 +67,12 @@ const ImagePlaceHolder = ({
           </button>
           <button
             type="button"
+            disabled={pictureUploadingLoader}
             className="absolute top-3 right-16 p-2 rounded bg-blue-600 shadow-lg cursor-pointer"
-            onClick={() => setOpenImageModal && setOpenImageModal(true)}
+            onClick={() => {
+              setOpenImageModal && setOpenImageModal(true);
+              setSelectedImage && setSelectedImage(images[index].file_url);
+            }}
           >
             <WandSparkles size={16} />
           </button>

@@ -1,7 +1,7 @@
 'use client';
 
 import ImagePlaceHolder from '@/shared/image-placeholder';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Wand, X } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -14,6 +14,8 @@ import {
 } from '@eshop-multivendor-ecommerce-microservice/components';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '@/utils/axiosInstance';
+import Image from 'next/image';
+import { enhancements } from '@/utils/AI.enhancement';
 
 interface UploadedImage {
   fileId: string;
@@ -23,8 +25,13 @@ interface UploadedImage {
 const Page = () => {
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [isChanged, setIsChanged] = useState<boolean>(true);
+  const [activeEffect, setActiveEffect] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [pictureUploadingLoader, setPictureUploadingLoader] =
+    useState<boolean>(false);
   const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [processing, setProcessing] = useState<boolean>(false);
 
   const {
     register,
@@ -88,6 +95,7 @@ const Page = () => {
   };
   const handleImageChange = async (file: File | null, index: number) => {
     if (!file) return;
+    setPictureUploadingLoader(true);
 
     try {
       const fileName = await convertFileToBase64(file);
@@ -112,6 +120,8 @@ const Page = () => {
     } catch (error) {
       console.log('Error uploading image: ', error);
       console.log(error);
+    } finally {
+      setPictureUploadingLoader(false);
     }
   };
 
@@ -141,6 +151,22 @@ const Page = () => {
     }
   };
 
+  const applyTransformation = async (trasformation: string) => {
+    if (!selectedImage || processing) return;
+
+    setProcessing(true);
+    setActiveEffect(trasformation);
+
+    try {
+      const transformationUrl = `${selectedImage}?tr=${trasformation}`;
+      setSelectedImage(transformationUrl);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const handleSaveDraft = () => {
     //
   };
@@ -159,7 +185,6 @@ const Page = () => {
         <ChevronRight size={20} className="opacity-[.8]" />
         <span className="text-[#80Deea] cursor-pointer">Create Product</span>
       </div>
-
       {/* Content Layout */}
       <div className="py-4 flex w-full gap-6">
         {/* Left side - Image upload section */}
@@ -169,8 +194,11 @@ const Page = () => {
               setOpenImageModal={setOpenImageModal}
               size="765 x 850"
               small={false}
+              images={images}
+              pictureUploadingLoader={pictureUploadingLoader}
               index={0}
               onImageChange={handleImageChange}
+              setSelectedImage={setSelectedImage}
               onRemove={handleRemoveImage}
             />
           )}
@@ -178,9 +206,12 @@ const Page = () => {
           <div className="grid grid-cols-2 gap-3 mt-4">
             {images.slice(1).map((image, index) => (
               <ImagePlaceHolder
+                key={index}
                 setOpenImageModal={setOpenImageModal}
                 size="765 x 850"
+                images={images}
                 small={true}
+                setSelectedImage={setSelectedImage}
                 index={index + 1}
                 onImageChange={handleImageChange}
                 onRemove={handleRemoveImage}
@@ -586,6 +617,53 @@ const Page = () => {
           </div>
         </div>
       </div>
+      {openImageModal && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center">
+          <div className="bg-gray-800 p-6  rounded-lg w-112.5 text-white">
+            <div className="flex justify-between items-center pb-3 mb-4">
+              <h2 className="text-lg font-semibold">Enhance Product Image</h2>
+              <X
+                size={20}
+                className="cursor-pointer"
+                onClick={() => setOpenImageModal(!openImageModal)}
+              />
+            </div>
+
+            <div className="w-full h-62.5 rounded-md overflow-hidden border border-gray-600">
+              <Image
+                src={selectedImage}
+                alt="Image Preview"
+                width={500}
+                height={500}
+                quality={100}
+                unoptimized // <-- Add this to bypass the Next.js local server proxy
+                priority // Optional: loads it faster if it's above the fold
+              />
+            </div>
+            {selectedImage && (
+              <div className="mt-4 space-y-2">
+                <h3 className="text-white text-sm font-semibold">
+                  AI Enhanced Image
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3 max-h-62.5 overflow-y-auto">
+                  {enhancements.map(({ lable, effect }) => (
+                    <button
+                      type="button"
+                      key={effect}
+                      className={`p-2 rounded-md cursor-pointer flex items-center ${activeEffect === effect ? 'bg-blue-600 text-white' : 'bg-gray-600 hover:bg-gray-600'}`}
+                      onClick={() => applyTransformation(effect)}
+                      disabled={processing}
+                    >
+                      <Wand size={20} /> {lable}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 flex justify-end gap-3">
         {isChanged && (
