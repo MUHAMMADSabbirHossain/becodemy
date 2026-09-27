@@ -1,9 +1,14 @@
-import { prisma } from '@eshop-multivendor-ecommerce-microservice/database';
+import {
+  imageKit,
+  prisma,
+} from '@eshop-multivendor-ecommerce-microservice/database';
 import { NextFunction, Request, Response } from 'express';
 import {
   NotFoundError,
   ValidationError,
 } from '@eshop-multivendor-ecommerce-microservice/error-handler';
+import { toFile } from '@imagekit/nodejs';
+
 // Get product categories
 export const getCategories = async (
   req: Request,
@@ -114,6 +119,63 @@ export const deleteDiscountCodes = async (
       message: 'Discount code deleted successfully!',
     });
   } catch (error) {
+    return next(error);
+  }
+};
+
+// Upload product image
+export const uploadProductImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { fileName } = req.body;
+
+    if (!fileName) return next(new ValidationError('File name is required!'));
+
+    console.log(fileName);
+
+    const response = await imageKit.files.upload({
+      file: await toFile(
+        Buffer.from(fileName.replace(/^data:image\/\w+;base64,/, ''), 'base64'),
+      ),
+      fileName: `product-${Date.now()}.jpg`,
+      folder: '/products',
+    });
+
+    console.log(response);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Product image uploaded successfully!',
+      file_url: response.url,
+      fileId: response.fileId,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
+// Delete product image
+export const deleteProductImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { fileId } = req.body;
+
+    const response = await imageKit.files.delete(fileId);
+    // console.log(response); // { fileId: 'fileId' }
+
+    return res.status(204).json({
+      success: true,
+      message: 'Product image deleted successfully!',
+    });
+  } catch (error) {
+    console.log(error);
     return next(error);
   }
 };

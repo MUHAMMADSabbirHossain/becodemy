@@ -53,12 +53,14 @@ const ImagePlaceHolder = ({
         <>
           <button
             type="button"
-            className="absolute top-3 right-3 p-2 rounded bg-red-600 shadow-lg"
+            className="absolute top-3 right-3 p-2 rounded bg-red-600 shadow-lg cursor-pointer"
+            onClick={() => onRemove && onRemove(index)}
           >
             <X size={16} />
           </button>
           <button
-            className="absolute top-3 right-3 p-2 rounded bg-red-600 shadow-lg cursor-pointer"
+            type="button"
+            className="absolute top-3 right-16 p-2 rounded bg-blue-600 shadow-lg cursor-pointer"
             onClick={() => setOpenImageModal && setOpenImageModal(true)}
           >
             <WandSparkles size={16} />

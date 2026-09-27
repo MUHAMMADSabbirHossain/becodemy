@@ -15,10 +15,15 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '@/utils/axiosInstance';
 
+interface UploadedImage {
+  fileId: string;
+  file_url: string;
+}
+
 const Page = () => {
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [isChanged, setIsChanged] = useState<boolean>(true);
-  const [images, setImages] = useState<(File | null)[]>([null]);
+  const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -73,36 +78,67 @@ const Page = () => {
     console.log(data);
   };
 
-  const handleImageChange = (file: File | null, index: number) => {
-    const updatedImages = [...images];
-    updatedImages[index] = file;
+  const convertFileToBase64 = async (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+  const handleImageChange = async (file: File | null, index: number) => {
+    if (!file) return;
 
-    if (index === images.length - 1 && images.length < 8) {
-      updatedImages.push(null);
+    try {
+      const fileName = await convertFileToBase64(file);
+      const response = await axiosInstance.post(
+        '/product/api/upload-product-image',
+        {
+          fileName,
+        },
+      );
+      const updatedImages = [...images];
+      const uploadedImage: UploadedImage = {
+        fileId: response?.data?.fileId,
+        file_url: response?.data?.file_url,
+      };
+      updatedImages[index] = uploadedImage;
+
+      if (index === images.length - 1 && images.length < 8)
+        updatedImages.push(null);
+
+      setImages(updatedImages);
+      setValue('images', updatedImages);
+    } catch (error) {
+      console.log('Error uploading image: ', error);
+      console.log(error);
     }
-
-    setImages(updatedImages);
-    setValue('images', updatedImages);
   };
 
-  const handleRemoveImage = (index: number) => {
-    setImages((prevImages) => {
-      const updatedImages = [...prevImages];
+  const handleRemoveImage = async (index: number) => {
+    try {
+      const updatedImages = [...images];
+      const imageToDelete = updatedImages[index];
 
-      if (index === -1) {
-        updatedImages[0] = null;
-      } else {
-        updatedImages.splice(index, 1);
+      if (imageToDelete && typeof imageToDelete === 'object') {
+        await axiosInstance.delete('/product/api/delete-product-image', {
+          data: {
+            fileId: imageToDelete.fileId,
+          },
+        });
       }
 
-      if (!updatedImages.includes(null) && updatedImages.length < 8) {
+      updatedImages.splice(index, 1);
+
+      // Add null placeholder
+      if (!updatedImages.includes(null) && updatedImages.length < 8)
         updatedImages.push(null);
-      }
 
-      return updatedImages;
-    });
-
-    setValue('images', images);
+      setImages(updatedImages);
+      setValue('images', updatedImages);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSaveDraft = () => {

@@ -25,8 +25,9 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: '1000mb' }));
 app.use(cookieParser());
+app.use(express.urlencoded({ limit: '1000mb', extended: true }));
 
 app.get('/', (req, res) => {
   res.send({ message: 'Hello Product API!' });
