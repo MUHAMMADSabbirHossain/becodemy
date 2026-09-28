@@ -3,6 +3,7 @@ import { isAuthenticated } from '@eshop-multivendor-ecommerce-microservice/middl
 import express, { Router } from 'express';
 import {
   createDiscountCodes,
+  createProduct,
   deleteDiscountCodes,
   deleteProductImage,
   getCategories,
@@ -22,5 +23,6 @@ router.delete(
 );
 router.post('/upload-product-image', isAuthenticated, uploadProductImage);
 router.delete('/delete-product-image', isAuthenticated, deleteProductImage);
+router.post('/create-product', isAuthenticated, createProduct);
 
 export default router;

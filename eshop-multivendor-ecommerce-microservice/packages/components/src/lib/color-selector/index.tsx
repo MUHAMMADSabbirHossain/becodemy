@@ -30,6 +30,7 @@ const ColorSelector = ({ control, errors }: any) => {
             {[...defaultColors, ...customColors].map((color) => {
               const isSelected = (field.value || []).includes(color);
               const isLightColor = ['#ffffff', '#ffffoo'].includes(color);
+              console.log(field.value);
 
               return (
                 <button
@@ -42,7 +43,7 @@ const ColorSelector = ({ control, errors }: any) => {
                         : [...(field.value || []), color],
                     )
                   }
-                  className={`w-7 h-7 p-2 rounded my-1 flex items-center justify-center border-2 transition  ${isSelected ? 'scale-110 border-white' : 'border-transparent'} ${
+                  className={`w-7 h-7 p-2 rounded my-1 flex items-center justify-center transition  ${isSelected ? 'scale-110 border border-white' : 'border-transparent'} ${
                     isLightColor ? 'border-gray-600' : ''
                   }`}
                   style={{ backgroundColor: color }}
@@ -84,6 +85,9 @@ const ColorSelector = ({ control, errors }: any) => {
           </div>
         )}
       />
+      {errors.colors && (
+        <span className="text-red-500">{errors.colors.message}</span>
+      )}
     </div>
   );
 };

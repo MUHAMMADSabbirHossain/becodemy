@@ -134,3 +134,48 @@ model discount_codes {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum productStatus {
+  Active
+  Pending
+  Draft
+}
+
+model products {
+  id                   ObjectId       @id @map("_id") 
+  title                  String
+  slug                   String       @unique
+  category               String
+  subcategory            String
+  short_description      String
+  detailed_description   String
+  // // images                 images[]
+  // images                 ObjectId[] 
+  video_url              String?
+  tags                   String[]
+  brand                  String?
+  colors                 String[]
+  sizes                  String[]
+  starting_date          DateTime?
+  ending_date            DateTime?
+  stock                  Int
+  sale_price             Float
+  regular_price          Float
+  rattings               Float         @default(0)
+  warranty               String?
+  // custom_specifications  Json?
+  // custom_properties      Json
+  isDeleted              Boolean       @default(false)
+  cashOnDelivery         String?
+  status                 productStatus @default(Active)
+
+  // // discountCodes          discount_codes[] 
+  // discount_codes         ObjectId[] 
+ 
+  shopId ObjectId
+  shops  shops    @relation(fields: [shopId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}

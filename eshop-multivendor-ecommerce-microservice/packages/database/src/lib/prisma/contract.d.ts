@@ -17,7 +17,7 @@ import type {
 } from '@internal/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'8d719e4c8a030a778b1d3c3eef04f3009b52efb630cfe5cc0727cba0cea99a10'>;
+  StorageHashBase<'5a0d6a4e6e0a9c712f41bd82b661fd931faccd51f1271bded4b50a138fcfe247'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -65,6 +65,34 @@ export type FieldOutputTypes = {
       readonly shopId: CodecTypes['mongo/objectId@1']['output'] | null;
       readonly createdAt: CodecTypes['mongo/date@1']['output'];
       readonly updatedAt: CodecTypes['mongo/date@1']['output'];
+    };
+    readonly products: {
+      readonly _id: CodecTypes['mongo/objectId@1']['output'];
+      readonly title: CodecTypes['mongo/string@1']['output'];
+      readonly slug: CodecTypes['mongo/string@1']['output'];
+      readonly category: CodecTypes['mongo/string@1']['output'];
+      readonly subcategory: CodecTypes['mongo/string@1']['output'];
+      readonly short_description: CodecTypes['mongo/string@1']['output'];
+      readonly detailed_description: CodecTypes['mongo/string@1']['output'];
+      readonly video_url: CodecTypes['mongo/string@1']['output'] | null;
+      readonly tags: ReadonlyArray<CodecTypes['mongo/string@1']['output']>;
+      readonly brand: CodecTypes['mongo/string@1']['output'] | null;
+      readonly colors: ReadonlyArray<CodecTypes['mongo/string@1']['output']>;
+      readonly sizes: ReadonlyArray<CodecTypes['mongo/string@1']['output']>;
+      readonly starting_date: CodecTypes['mongo/date@1']['output'] | null;
+      readonly ending_date: CodecTypes['mongo/date@1']['output'] | null;
+      readonly stock: CodecTypes['mongo/int32@1']['output'];
+      readonly sale_price: CodecTypes['mongo/double@1']['output'];
+      readonly regular_price: CodecTypes['mongo/double@1']['output'];
+      readonly rattings: CodecTypes['mongo/double@1']['output'];
+      readonly warranty: CodecTypes['mongo/string@1']['output'] | null;
+      readonly isDeleted: CodecTypes['mongo/bool@1']['output'];
+      readonly cashOnDelivery: CodecTypes['mongo/string@1']['output'] | null;
+      readonly status: 'Active' | 'Pending' | 'Draft';
+      readonly shopId: CodecTypes['mongo/objectId@1']['output'];
+      readonly createdAt: CodecTypes['mongo/date@1']['output'];
+      readonly updatedAt: CodecTypes['mongo/date@1']['output'];
+      readonly deletedAt: CodecTypes['mongo/date@1']['output'] | null;
     };
     readonly sellers: {
       readonly _id: CodecTypes['mongo/objectId@1']['output'];
@@ -140,6 +168,34 @@ export type FieldInputTypes = {
       readonly shopId: CodecTypes['mongo/objectId@1']['input'] | null;
       readonly createdAt: CodecTypes['mongo/date@1']['input'];
       readonly updatedAt: CodecTypes['mongo/date@1']['input'];
+    };
+    readonly products: {
+      readonly _id: CodecTypes['mongo/objectId@1']['input'];
+      readonly title: CodecTypes['mongo/string@1']['input'];
+      readonly slug: CodecTypes['mongo/string@1']['input'];
+      readonly category: CodecTypes['mongo/string@1']['input'];
+      readonly subcategory: CodecTypes['mongo/string@1']['input'];
+      readonly short_description: CodecTypes['mongo/string@1']['input'];
+      readonly detailed_description: CodecTypes['mongo/string@1']['input'];
+      readonly video_url: CodecTypes['mongo/string@1']['input'] | null;
+      readonly tags: ReadonlyArray<CodecTypes['mongo/string@1']['input']>;
+      readonly brand: CodecTypes['mongo/string@1']['input'] | null;
+      readonly colors: ReadonlyArray<CodecTypes['mongo/string@1']['input']>;
+      readonly sizes: ReadonlyArray<CodecTypes['mongo/string@1']['input']>;
+      readonly starting_date: CodecTypes['mongo/date@1']['input'] | null;
+      readonly ending_date: CodecTypes['mongo/date@1']['input'] | null;
+      readonly stock: CodecTypes['mongo/int32@1']['input'];
+      readonly sale_price: CodecTypes['mongo/double@1']['input'];
+      readonly regular_price: CodecTypes['mongo/double@1']['input'];
+      readonly rattings: CodecTypes['mongo/double@1']['input'];
+      readonly warranty: CodecTypes['mongo/string@1']['input'] | null;
+      readonly isDeleted: CodecTypes['mongo/bool@1']['input'];
+      readonly cashOnDelivery: CodecTypes['mongo/string@1']['input'] | null;
+      readonly status: 'Active' | 'Pending' | 'Draft';
+      readonly shopId: CodecTypes['mongo/objectId@1']['input'];
+      readonly createdAt: CodecTypes['mongo/date@1']['input'];
+      readonly updatedAt: CodecTypes['mongo/date@1']['input'];
+      readonly deletedAt: CodecTypes['mongo/date@1']['input'] | null;
     };
     readonly sellers: {
       readonly _id: CodecTypes['mongo/objectId@1']['input'];
@@ -275,6 +331,86 @@ type ContractBase = Omit<
                   };
                   readonly additionalProperties: false;
                   readonly required: readonly ['_id', 'createdAt', 'file_id', 'updatedAt', 'url'];
+                };
+                readonly validationLevel: 'strict';
+                readonly validationAction: 'error';
+              };
+            };
+            readonly products: {
+              readonly kind: 'mongo-collection';
+              readonly indexes: readonly [
+                {
+                  readonly kind: 'mongo-index';
+                  readonly keys: readonly [{ readonly field: 'slug'; readonly direction: 1 }];
+                  readonly unique: true;
+                },
+              ];
+              readonly validator: {
+                readonly kind: 'mongo-validator';
+                readonly jsonSchema: {
+                  readonly bsonType: 'object';
+                  readonly properties: {
+                    readonly _id: { readonly bsonType: 'objectId' };
+                    readonly title: { readonly bsonType: 'string' };
+                    readonly slug: { readonly bsonType: 'string' };
+                    readonly category: { readonly bsonType: 'string' };
+                    readonly subcategory: { readonly bsonType: 'string' };
+                    readonly short_description: { readonly bsonType: 'string' };
+                    readonly detailed_description: { readonly bsonType: 'string' };
+                    readonly video_url: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly tags: {
+                      readonly bsonType: 'array';
+                      readonly items: { readonly bsonType: 'string' };
+                    };
+                    readonly brand: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly colors: {
+                      readonly bsonType: 'array';
+                      readonly items: { readonly bsonType: 'string' };
+                    };
+                    readonly sizes: {
+                      readonly bsonType: 'array';
+                      readonly items: { readonly bsonType: 'string' };
+                    };
+                    readonly starting_date: { readonly bsonType: readonly ['null', 'date'] };
+                    readonly ending_date: { readonly bsonType: readonly ['null', 'date'] };
+                    readonly stock: { readonly bsonType: 'int' };
+                    readonly sale_price: { readonly bsonType: 'double' };
+                    readonly regular_price: { readonly bsonType: 'double' };
+                    readonly rattings: { readonly bsonType: 'double' };
+                    readonly warranty: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly isDeleted: { readonly bsonType: 'bool' };
+                    readonly cashOnDelivery: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly status: {
+                      readonly bsonType: 'string';
+                      readonly enum: readonly ['Active', 'Pending', 'Draft'];
+                    };
+                    readonly shopId: { readonly bsonType: 'objectId' };
+                    readonly createdAt: { readonly bsonType: 'date' };
+                    readonly updatedAt: { readonly bsonType: 'date' };
+                    readonly deletedAt: { readonly bsonType: readonly ['null', 'date'] };
+                  };
+                  readonly additionalProperties: false;
+                  readonly required: readonly [
+                    '_id',
+                    'category',
+                    'colors',
+                    'createdAt',
+                    'detailed_description',
+                    'isDeleted',
+                    'rattings',
+                    'regular_price',
+                    'sale_price',
+                    'shopId',
+                    'short_description',
+                    'sizes',
+                    'slug',
+                    'status',
+                    'stock',
+                    'subcategory',
+                    'tags',
+                    'title',
+                    'updatedAt',
+                  ];
                 };
                 readonly validationLevel: 'strict';
                 readonly validationAction: 'error';
@@ -524,6 +660,10 @@ type ContractBase = Omit<
       readonly namespace: '__unbound__' & NamespaceId;
       readonly model: 'discount_codes';
     };
+    readonly products: {
+      readonly namespace: '__unbound__' & NamespaceId;
+      readonly model: 'products';
+    };
   };
   readonly domain: {
     readonly namespaces: {
@@ -639,6 +779,131 @@ type ContractBase = Omit<
               };
             };
             readonly storage: { readonly collection: 'images' };
+          };
+          readonly products: {
+            readonly fields: {
+              readonly _id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly slug: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly category: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly subcategory: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly short_description: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly detailed_description: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly video_url: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly tags: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+                readonly many: true;
+              };
+              readonly brand: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly colors: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+                readonly many: true;
+              };
+              readonly sizes: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+                readonly many: true;
+              };
+              readonly starting_date: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly ending_date: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly stock: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/int32@1' };
+              };
+              readonly sale_price: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
+              };
+              readonly regular_price: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
+              };
+              readonly rattings: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
+              };
+              readonly warranty: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly isDeleted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/bool@1' };
+              };
+              readonly cashOnDelivery: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly shopId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly deletedAt: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+            };
+            readonly relations: {
+              readonly shops: {
+                readonly to: {
+                  readonly namespace: '__unbound__' & NamespaceId;
+                  readonly model: 'shops';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['shopId'];
+                  readonly targetFields: readonly ['_id'];
+                };
+              };
+            };
+            readonly storage: { readonly collection: 'products' };
           };
           readonly sellers: {
             readonly fields: {
@@ -963,6 +1228,16 @@ type ContractBase = Omit<
                 readonly many: true;
               };
             };
+          };
+        };
+        readonly enum: {
+          readonly productStatus: {
+            readonly codecId: 'mongo/string@1';
+            readonly members: readonly [
+              { readonly name: 'Active'; readonly value: 'Active' },
+              { readonly name: 'Pending'; readonly value: 'Pending' },
+              { readonly name: 'Draft'; readonly value: 'Draft' },
+            ];
           };
         };
       };

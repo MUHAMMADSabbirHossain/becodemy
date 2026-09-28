@@ -4,6 +4,7 @@ import {
 } from '@eshop-multivendor-ecommerce-microservice/database';
 import { NextFunction, Request, Response } from 'express';
 import {
+  AuthError,
   NotFoundError,
   ValidationError,
 } from '@eshop-multivendor-ecommerce-microservice/error-handler';
@@ -169,6 +170,99 @@ export const deleteProductImage = async (
     return res.status(204).json({
       success: true,
       message: 'Product image deleted successfully!',
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
+// Create product
+export const createProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const {
+      title,
+      short_description,
+      detailed_description,
+      warranty,
+      custom_specifications,
+      slug,
+      tags,
+      cash_on_delivery,
+      brand,
+      video_url,
+      category,
+      colors = [],
+      sizes = [],
+      discountCodes,
+      stock,
+      sale_price,
+      regular_price,
+      subcategory,
+      customProperties = {},
+      images = [],
+    } = req.body;
+
+    if (
+      !title ||
+      !slug ||
+      !short_description ||
+      !category ||
+      !subcategory ||
+      !sale_price ||
+      !images ||
+      !tags ||
+      !stock ||
+      !regular_price
+    )
+      return next(new ValidationError('Missing required fields!'));
+
+    if (!req.seller._id)
+      return next(
+        new AuthError('Unauthorized! Only seller can create a product.'),
+      );
+
+    const slugChecking = await prisma.orm.products.where({ slug }).first();
+
+    if (slugChecking) return next(new ValidationError('Slug already exists!'));
+
+    const newProduct = await prisma.orm.products.create({
+      title,
+      short_description,
+      detailed_description,
+      warranty,
+      cashOnDelivery: cash_on_delivery,
+      slug,
+      shopId: req.seller?.shop?._id,
+      sellerId: req.seller._id,
+      tags: Array.isArray(tags) ? tags : tags.split(','),
+      brand,
+      video_url,
+      category,
+      subcategory,
+      colors: colors || [],
+      discount_codes: discountCodes.map((codeId: string) => codeId),
+      sizes: sizes || [],
+      stock: parseInt(stock),
+      sale_price: parseFloat(sale_price),
+      regular_price: parseFloat(regular_price),
+      customProperties: customProperties || {},
+      images: images
+        .filter((img: any) => img && img.fileId && img.file_url)
+        .map((img: any) => ({
+          fileId: img.fileId,
+          file_url: img.file_url,
+        })),
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Product created successfully!',
+      product: newProduct,
     });
   } catch (error) {
     console.log(error);

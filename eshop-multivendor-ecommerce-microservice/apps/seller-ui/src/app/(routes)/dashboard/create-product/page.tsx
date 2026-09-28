@@ -16,6 +16,8 @@ import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '@/utils/axiosInstance';
 import Image from 'next/image';
 import { enhancements } from '@/utils/AI.enhancement';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface UploadedImage {
   fileId: string;
@@ -32,6 +34,7 @@ const Page = () => {
   const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
   const [loading, setLoading] = useState<boolean>(false);
   const [processing, setProcessing] = useState<boolean>(false);
+  const router = useRouter();
 
   const {
     register,
@@ -81,8 +84,20 @@ const Page = () => {
     return selectedCategory ? subcategoriesData[selectedCategory] || [] : [];
   }, [selectedCategory, subcategoriesData]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log(data);
+    try {
+      setLoading(true);
+      await axiosInstance.post('/product/api/create-product', data);
+
+      // alert('Product created successfully!');
+      router.push('/dashboard/all-products');
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.data?.message || 'Something went wrong!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const convertFileToBase64 = async (file: File) => {
@@ -242,8 +257,8 @@ const Page = () => {
                   cols={10}
                   label="Short Description * (Max 150 words)"
                   placeholder="Enter short description for quick overview"
-                  {...register('description', {
-                    required: 'Description is required',
+                  {...register('short_description', {
+                    required: 'Short description is required',
                     validate: (value) => {
                       const wordCount = value.trim().split(/\s+/).length;
                       return (
@@ -453,7 +468,7 @@ const Page = () => {
                         .filter((word: string) => word).length;
 
                       return (
-                        wordCount >= 100 ||
+                        wordCount <= 100 ||
                         'Detailed description must be at least 100 words long.'
                       );
                     },
@@ -478,12 +493,12 @@ const Page = () => {
                   placeholder="https://www.youtube.com/embed/VIDEO_ID"
                   {...(register('video_url'),
                   {
-                    pattern: {
-                      value:
-                        /^https?:\/\/(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})$/,
-                      message:
-                        'Invalid YouTube embed video URL! Use formate: https://www.youtube.com/embed/VIDEO_ID',
-                    },
+                    // pattern: {
+                    //   value:
+                    //     /^https?:\/\/(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})$/,
+                    //   message:
+                    //     'Invalid YouTube embed video URL! Use formate: https://www.youtube.com/embed/VIDEO_ID',
+                    // },
                   })}
                 />
                 {errors.video_url && (

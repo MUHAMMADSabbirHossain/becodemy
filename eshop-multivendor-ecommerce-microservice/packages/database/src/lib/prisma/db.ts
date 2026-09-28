@@ -20,6 +20,10 @@ const contractJson = {
       model: 'images',
       namespace: '__unbound__',
     },
+    products: {
+      model: 'products',
+      namespace: '__unbound__',
+    },
     sellers: {
       model: 'sellers',
       namespace: '__unbound__',
@@ -44,6 +48,25 @@ const contractJson = {
   domain: {
     namespaces: {
       __unbound__: {
+        enum: {
+          productStatus: {
+            codecId: 'mongo/string@1',
+            members: [
+              {
+                name: 'Active',
+                value: 'Active',
+              },
+              {
+                name: 'Pending',
+                value: 'Pending',
+              },
+              {
+                name: 'Draft',
+                value: 'Draft',
+              },
+            ],
+          },
+        },
         models: {
           discount_codes: {
             fields: {
@@ -206,6 +229,217 @@ const contractJson = {
             },
             storage: {
               collection: 'images',
+            },
+          },
+          products: {
+            fields: {
+              _id: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/objectId@1',
+                  kind: 'scalar',
+                },
+              },
+              brand: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              cashOnDelivery: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              category: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              colors: {
+                many: true,
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              createdAt: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              deletedAt: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              detailed_description: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              ending_date: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              isDeleted: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/bool@1',
+                  kind: 'scalar',
+                },
+              },
+              rattings: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/double@1',
+                  kind: 'scalar',
+                },
+              },
+              regular_price: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/double@1',
+                  kind: 'scalar',
+                },
+              },
+              sale_price: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/double@1',
+                  kind: 'scalar',
+                },
+              },
+              shopId: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/objectId@1',
+                  kind: 'scalar',
+                },
+              },
+              short_description: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              sizes: {
+                many: true,
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              slug: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              starting_date: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              status: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+                valueSet: {
+                  entityKind: 'enum',
+                  entityName: 'productStatus',
+                  namespaceId: '__unbound__',
+                  plane: 'domain',
+                },
+              },
+              stock: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/int32@1',
+                  kind: 'scalar',
+                },
+              },
+              subcategory: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              tags: {
+                many: true,
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              title: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              updatedAt: {
+                nullable: false,
+                type: {
+                  codecId: 'mongo/date@1',
+                  kind: 'scalar',
+                },
+              },
+              video_url: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+              warranty: {
+                nullable: true,
+                type: {
+                  codecId: 'mongo/string@1',
+                  kind: 'scalar',
+                },
+              },
+            },
+            relations: {
+              shops: {
+                cardinality: 'N:1',
+                on: {
+                  localFields: ['shopId'],
+                  targetFields: ['_id'],
+                },
+                to: {
+                  model: 'shops',
+                  namespace: '__unbound__',
+                },
+              },
+            },
+            storage: {
+              collection: 'products',
             },
           },
           sellers: {
@@ -813,6 +1047,141 @@ const contractJson = {
                 validationLevel: 'strict',
               },
             },
+            products: {
+              indexes: [
+                {
+                  keys: [
+                    {
+                      direction: 1,
+                      field: 'slug',
+                    },
+                  ],
+                  kind: 'mongo-index',
+                  unique: true,
+                },
+              ],
+              kind: 'mongo-collection',
+              validator: {
+                jsonSchema: {
+                  additionalProperties: false,
+                  bsonType: 'object',
+                  properties: {
+                    _id: {
+                      bsonType: 'objectId',
+                    },
+                    brand: {
+                      bsonType: ['null', 'string'],
+                    },
+                    cashOnDelivery: {
+                      bsonType: ['null', 'string'],
+                    },
+                    category: {
+                      bsonType: 'string',
+                    },
+                    colors: {
+                      bsonType: 'array',
+                      items: {
+                        bsonType: 'string',
+                      },
+                    },
+                    createdAt: {
+                      bsonType: 'date',
+                    },
+                    deletedAt: {
+                      bsonType: ['null', 'date'],
+                    },
+                    detailed_description: {
+                      bsonType: 'string',
+                    },
+                    ending_date: {
+                      bsonType: ['null', 'date'],
+                    },
+                    isDeleted: {
+                      bsonType: 'bool',
+                    },
+                    rattings: {
+                      bsonType: 'double',
+                    },
+                    regular_price: {
+                      bsonType: 'double',
+                    },
+                    sale_price: {
+                      bsonType: 'double',
+                    },
+                    shopId: {
+                      bsonType: 'objectId',
+                    },
+                    short_description: {
+                      bsonType: 'string',
+                    },
+                    sizes: {
+                      bsonType: 'array',
+                      items: {
+                        bsonType: 'string',
+                      },
+                    },
+                    slug: {
+                      bsonType: 'string',
+                    },
+                    starting_date: {
+                      bsonType: ['null', 'date'],
+                    },
+                    status: {
+                      bsonType: 'string',
+                      enum: ['Active', 'Pending', 'Draft'],
+                    },
+                    stock: {
+                      bsonType: 'int',
+                    },
+                    subcategory: {
+                      bsonType: 'string',
+                    },
+                    tags: {
+                      bsonType: 'array',
+                      items: {
+                        bsonType: 'string',
+                      },
+                    },
+                    title: {
+                      bsonType: 'string',
+                    },
+                    updatedAt: {
+                      bsonType: 'date',
+                    },
+                    video_url: {
+                      bsonType: ['null', 'string'],
+                    },
+                    warranty: {
+                      bsonType: ['null', 'string'],
+                    },
+                  },
+                  required: [
+                    '_id',
+                    'category',
+                    'colors',
+                    'createdAt',
+                    'detailed_description',
+                    'isDeleted',
+                    'rattings',
+                    'regular_price',
+                    'sale_price',
+                    'shopId',
+                    'short_description',
+                    'sizes',
+                    'slug',
+                    'status',
+                    'stock',
+                    'subcategory',
+                    'tags',
+                    'title',
+                    'updatedAt',
+                  ],
+                },
+                kind: 'mongo-validator',
+                validationAction: 'error',
+                validationLevel: 'strict',
+              },
+            },
             sellers: {
               indexes: [
                 {
@@ -1140,13 +1509,19 @@ const contractJson = {
               },
             },
           },
+          valueSet: {
+            productStatus: {
+              kind: 'valueSet',
+              values: ['Active', 'Pending', 'Draft'],
+            },
+          },
         },
         id: '__unbound__',
         kind: 'mongo-database',
       },
     },
     storageHash:
-      '8d719e4c8a030a778b1d3c3eef04f3009b52efb630cfe5cc0727cba0cea99a10',
+      '5a0d6a4e6e0a9c712f41bd82b661fd931faccd51f1271bded4b50a138fcfe247',
   },
   capabilities: {},
   extensions: {},
