@@ -9,6 +9,10 @@ import {
   ValidationError,
 } from '@eshop-multivendor-ecommerce-microservice/error-handler';
 import { toFile } from '@imagekit/nodejs';
+import {
+  MongoFieldFilter,
+  MongoOrExpr,
+} from '@prisma/orm-mongo/query-ast/execution';
 
 // Get product categories
 export const getCategories = async (
@@ -263,6 +267,33 @@ export const createProduct = async (
       success: true,
       message: 'Product created successfully!',
       product: newProduct,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
+// Get logged in seller products
+export const getShopProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products = await prisma.orm.products
+      .where(
+        MongoOrExpr.of([
+          MongoFieldFilter.eq('shopId', req.seller?.shop?._id),
+          MongoFieldFilter.eq('sellerId', req.seller._id),
+        ]),
+      )
+      .all();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Products fetched successfully!',
+      products,
     });
   } catch (error) {
     console.log(error);

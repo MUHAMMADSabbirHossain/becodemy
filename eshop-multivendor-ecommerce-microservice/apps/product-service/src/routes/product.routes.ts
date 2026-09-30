@@ -8,6 +8,7 @@ import {
   deleteProductImage,
   getCategories,
   getDiscountCodes,
+  getShopProducts,
   uploadProductImage,
 } from '../controllers/product.controller';
 
@@ -24,5 +25,6 @@ router.delete(
 router.post('/upload-product-image', isAuthenticated, uploadProductImage);
 router.delete('/delete-product-image', isAuthenticated, deleteProductImage);
 router.post('/create-product', isAuthenticated, createProduct);
+router.get('/get-shop-products', isAuthenticated, getShopProducts);
 
 export default router;
