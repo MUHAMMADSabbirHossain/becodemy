@@ -300,3 +300,78 @@ export const getShopProducts = async (
     return next(error);
   }
 };
+
+// Delete product
+export const deleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { productId } = req.params;
+    const sellerId = req.seller._id;
+
+    const product = await prisma.orm.products
+      .where({ _id: productId, sellerId })
+      .first();
+
+    if (!product) return next(new ValidationError('Product not found!'));
+
+    if (product.isDeleted)
+      return next(new ValidationError('Product already deleted!'));
+
+    const deletedProduct = await prisma.orm.products
+      .where({ _id: productId, sellerId })
+      .update({
+        isDeleted: true,
+        deletedAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Delete after 24 hours from database
+      });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully!',
+      product: deletedProduct,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
+// Restore product
+export const restoreProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { productId } = req.params;
+    const sellerId = req.seller._id;
+
+    const product = await prisma.orm.products.where({ _id: productId }).first();
+
+    if (!product) return next(new ValidationError('Product not found!'));
+
+    if (!product.isDeleted)
+      return next(new ValidationError('Product not deleted!'));
+
+    if (product.sellerId !== sellerId)
+      return next(new ValidationError('Unauthorized!'));
+
+    const restoredProduct = await prisma.orm.products
+      .where({ _id: productId })
+      .update({
+        isDeleted: false,
+        deletedAt: null,
+      });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Product restored successfully!',
+      product: restoredProduct,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};

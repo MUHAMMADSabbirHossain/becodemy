@@ -9,9 +9,10 @@ import cors from 'cors';
 import express from 'express';
 import * as path from 'path';
 import router from './routes/product.routes';
-// import swaggerUi from 'swagger-ui-express';
+import './jobs/product-cron.job';
+import swaggerUi from 'swagger-ui-express';
 
-// const swaggerDocument = require('./swagger-output.json');
+const swaggerDocument = require('./swagger-output.json');
 
 const app = express();
 const port = process.env.PORT || 6002;
@@ -39,10 +40,10 @@ app.get('/health-check', (req, res) => {
   });
 });
 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// app.get('/docs-json', (req, res) => {
-//   res.send(swaggerDocument);
-// });
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/docs-json', (req, res) => {
+  res.send(swaggerDocument);
+});
 
 // Routes
 app.use('/api', router);

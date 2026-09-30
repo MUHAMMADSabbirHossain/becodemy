@@ -3,11 +3,13 @@
 import React, { useMemo } from 'react';
 import {
   useTable,
-  Table,
+  rowSortingFeature,
   flexRender,
   tableFeatures,
+  sortFns,
+  createSortedRowModel,
 } from '@tanstack/react-table';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -32,6 +34,22 @@ const fetchProducts = async () => {
   return res?.data?.products || [];
 };
 
+const deleteProduct = async (productId: string) => {
+  const res = await axiosInstance.delete(
+    `${process.env.NEXT_PUBLIC_SERVER_URI}/product/api/delete-product/${productId}`,
+  );
+
+  return res.data;
+};
+
+const restoreProduct = async (productId: string) => {
+  const res = await axiosInstance.put(
+    `${process.env.NEXT_PUBLIC_SERVER_URI}/product/api/restore-product/${productId}`,
+  );
+
+  return res.data;
+};
+
 const ProductList = () => {
   const [globalFilter, setGlobalFilter] = React.useState<string>('');
   const [analyticsData, setAnalyticsData] = React.useState<'' | null>(null);
@@ -43,6 +61,24 @@ const ProductList = () => {
     queryKey: ['shop-products'],
     queryFn: fetchProducts,
     staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Delete Product Mutation
+  const deleteMutation = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shop-products'] });
+      setShowDeleteModal(false);
+    },
+  });
+
+  // Restore Product Mutation
+  const restoreMutation = useMutation({
+    mutationFn: restoreProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shop-products'] });
+      setShowDeleteModal(false);
+    },
   });
 
   const columns = useMemo(
@@ -61,7 +97,7 @@ const ProductList = () => {
         ),
       },
       {
-        accessorKey: 'name',
+        accessorKey: 'product-name',
         header: 'Product Name',
         cell: ({ row }: any) => {
           const truncatedTitle =
@@ -135,7 +171,7 @@ const ProductList = () => {
 
             <button
               className="text-red-400 hover:text-red-300 transition"
-              // onClick={() => openDeleteModal(row.original)}
+              onClick={() => openDeleteModal(row.original)}
             >
               <Trash size={20} />
             </button>
@@ -149,11 +185,22 @@ const ProductList = () => {
   const table = useTable({
     data: products,
     columns,
+    features: tableFeatures({
+      rowSortingFeature,
+      sortedRowModel: createSortedRowModel(),
+      sortFns,
+    }),
     // getCoreRowModel: getFilteredRowModel(),
     // globalFilterFn: 'includesString',
     // state: { globalFilter },
     // onGlobalFilterChange: setGlobalFilter,
   });
+
+  const openDeleteModal = (product: any) => {
+    // console.log(showDeleteModal);
+    setSelectedProduct(product);
+    setShowDeleteModal((prev) => !prev);
+  };
 
   return (
     <div className="w-full min-h-screen p-8 text-white">
@@ -167,7 +214,6 @@ const ProductList = () => {
           <Plus size={20} /> Add Product
         </Link>
       </div>
-
       {/* Breadcrumbs */}
       <div className="flex items-center mb-4">
         <Link href={'/dashboard'} className="text-blue-400 cursor-pointer">
@@ -176,7 +222,6 @@ const ProductList = () => {
         <ChevronRight size={20} className="text-gray-200" />
         <span className="text-white"> All Products</span>
       </div>
-
       {/* Search Bar */}
       <div className="mb-4 flex items-center bg-gray-900 p-2 rounded-md flex-1">
         <Search size={18} className="text-gray-400 mr-2" />
@@ -188,7 +233,6 @@ const ProductList = () => {
           onChange={(e) => setGlobalFilter(e.target.value)}
         />
       </div>
-
       {/* Table */}
       <div className="overflow-x-auto bg-gray-900 rounded-lg p-4">
         {isPending ? (
@@ -200,6 +244,7 @@ const ProductList = () => {
                 <tr key={headerGroup.id} className="border-b border-gray-800">
                   {headerGroup.headers.map((header: any) => (
                     <th key={header.id} className="p-3 text-left">
+                      <table.FlexRender header={header} />
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -230,13 +275,12 @@ const ProductList = () => {
             </tbody>
           </table>
         )}
-
         {showDeleteModal && (
           <DeleteConfirmationModal
             product={selectedProduct}
-            onClose={setShowDeleteModal(false)}
-            onConfirm={deleteMutation.mutate(selectedProduct?._id)}
-            onRestore={restoreMutation.mutate(selectedProduct?._id)}
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={() => deleteMutation.mutate(selectedProduct?._id)}
+            onRestore={() => restoreMutation.mutate(selectedProduct?._id)}
           />
         )}
       </div>

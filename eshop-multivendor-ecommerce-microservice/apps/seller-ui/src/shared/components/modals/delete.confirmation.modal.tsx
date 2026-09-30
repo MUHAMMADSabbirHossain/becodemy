@@ -23,23 +23,45 @@ const DeleteConfirmationModal = ({
           Are you sure you want to delete{' '}
           <span className="font-semibold text-white">{product.name}</span>?
           <br />
-          This action **cannot be undone**.
+          This product will be move to **delete state** and permanently removed
+          **after 24 hours**. You can recover it within this time.
         </p>
 
         {/* Buttons */}
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={onConfirm}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2"
-          >
-            Delete
-          </button>
-          <button
-            onClick={onRestore}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-          >
-            Restore
-          </button>
+        <div className="flex justify-end mt-6 gap-3">
+          {product.isDeleted ? (
+            <>
+              <button
+                onClick={onClose}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={onRestore}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+              >
+                Restore
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onClose}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={onConfirm}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2"
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
